@@ -12,8 +12,8 @@ using namespace std;
 
 bool poleCollided[3];
 bool stopEverything = false;
-unsigned int Tries, Goals;
-int prevGoals;
+unsigned int Tries = 0, Goals = 0;
+int prevGoals = 0;
 string message = "MISS!";
 bool oncePassed = false;
 vector<float> currentTextColor = {1, 1, 1, 1};
@@ -240,6 +240,8 @@ void updatePos(PhysicalState &p, double t)  // update position of ball
         {
             p.positionCurrent[2] = 0;
             p.velocityCurrent[2] = -p.velocityCurrent[2] * p.elasticity;
+            p.velocityCurrent[0] = p.velocityCurrent[0] * p.elasticity;
+            p.velocityCurrent[1] = p.velocityCurrent[1] * p.elasticity;
             // for (int i = 0; i < 3; ++i)
             // {
             //     p.velocityCurrent[i] = p.elasticity * p.velocityCurrent[i];
@@ -736,6 +738,9 @@ void idle()
                     {
                         currentMode = CHOOSE;
                         rotateMsg(0);
+                        Goals = 0;
+                        prevGoals = 0;
+                        Tries = 0;
                     }
                 }
             }

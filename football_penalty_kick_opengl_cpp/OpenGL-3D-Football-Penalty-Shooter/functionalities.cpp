@@ -1039,7 +1039,7 @@ void resultMsg()            //printing results
             if (Tries % 5 == 0)
             {
              
-                if (Goals - prevGoals > 5 - Goals + prevGoals)
+                if (Goals > 5 - Goals)
                 {
                     msg = "A-WINS!";
                 }
@@ -1095,7 +1095,7 @@ void resultMsg()            //printing results
         if (Tries % 5 == 0)
         {
     
-            if (Goals - prevGoals > 5 - Goals + prevGoals)
+            if (Goals > 5 - Goals)
             {
                 message = "A-WINS!";
             }
