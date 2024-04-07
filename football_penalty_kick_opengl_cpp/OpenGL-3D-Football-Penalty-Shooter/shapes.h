@@ -64,6 +64,16 @@ public:
     void draw();
 };
 
+class StadiumDisplayBoard
+{
+public:
+    double width;
+    double height;
+    double length;
+    GLfloat color[4];
+    void draw();
+};
+
 extern FlatArrow aimArrow;
 
 extern FlatSurface ground;
@@ -71,5 +81,6 @@ extern FlatSurface ground;
 extern PoleSurface poles[3];
 extern RealObject allObjects[];
 extern Defender defender;
+extern StadiumDisplayBoard displayBoard;
 
 #endif // FOOTBALL_PENALTY_SHOOTER_SHAPES_H

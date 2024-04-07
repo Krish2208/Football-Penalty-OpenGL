@@ -136,6 +136,11 @@ void initialiseEverything()     // reset after every shoot
     poles[2].Type = R_POLE;
     poles[2].height = POLE_HEIGHT;
 
+    displayBoard.width = 20;
+    displayBoard.height = 20;
+    displayBoard.length = 10;
+    displayBoard.color[0] = {1.0, 0.0, 0.0, 1.0};
+
     temp = {0, 0, 0};
     aimArrow.start = temp;
     temp = {0, 2, 0};
@@ -320,6 +325,14 @@ void drawGoalPost()         //drawing goal post
         poles[2].draw();
         glPopMatrix();
     }
+}
+
+void drawDisplayBoard()         //drawing display board
+{
+    glPushMatrix();
+    glTranslated(GOAL_POST_X, GOAL_POST_Y - 10, 0);
+    displayBoard.draw();
+    glPopMatrix();
 }
 
 void cameraPosition(axes point, double distance, double zAngle, double xAngle)

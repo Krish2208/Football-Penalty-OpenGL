@@ -296,6 +296,30 @@ void Defender::draw()           // drawing defender
 
 }
 
+void StadiumDisplayBoard::draw()       // drawing stadium display board
+{
+    // Make a long Pole and then make a flat surface on top of it
+    glPushAttrib(GL_CURRENT_BIT);
+    GLUquadric *quadric = gluNewQuadric();
+    glPushMatrix();
+    glTranslated(0, 0, height / 2);
+    glColor4fv(color);
+    gluCylinder(quadric, width / 2, width / 2, height, 20, 10);
+    glPopMatrix();
+    glPushMatrix();
+    glTranslated(0, 0, height);
+    glScalef(1.0, 1.0, 0.1);
+    glBegin(GL_QUADS);
+    glVertex3f(-width / 2, -width / 2, 0);
+    glVertex3f(width / 2, -width / 2, 0);
+    glVertex3f(width / 2, width / 2, 0);
+    glVertex3f(-width / 2, width / 2, 0);
+    glEnd();
+    glPopMatrix();
+    gluDeleteQuadric(quadric);
+    glPopAttrib();
+}
+
 FlatArrow aimArrow;
 
 PoleSurface poles[3];
@@ -303,3 +327,5 @@ PoleSurface poles[3];
 Defender defender;
 
 RealObject allObjects[] = {poles[0], poles[1], poles[2]};
+
+StadiumDisplayBoard displayBoard;

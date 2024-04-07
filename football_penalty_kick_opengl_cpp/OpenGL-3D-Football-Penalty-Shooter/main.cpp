@@ -349,6 +349,8 @@ void draw()
     glColor4f(1.0, 1.0, 1.0, 0.7);
     drawGoalPost();
 
+    drawDisplayBoard();
+
     glPopAttrib();
     glPopMatrix();
 
