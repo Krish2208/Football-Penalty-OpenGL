@@ -322,7 +322,7 @@ void draw()
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
     GLfloat lightColor1[] = {0.3f, 0.3f, 0.1f, 1.0f};  // Color (0.5, 0.5, 0.5)
     GLfloat lightPos1[] = {-1.0f, -1.0f, -1.0f, 1.0f}; // Positioned at (4, 0, 8)
-    glLightfv(GL_LIGHT1, GL_AMBIENT, lightColor1);
+    // glLightfv(GL_LIGHT1, GL_AMBIENT, lightColor1);
 
     GLfloat lightColor2[] = {0.2f, 0.2f, 0.2f, 1.0f};  // Color (0.5, 0.5, 0.5)
     GLfloat lightPos2[] = {0.0f, 100.0f, 0.10f, 1.0f}; // Positioned at (4, 0, 8)

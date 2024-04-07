@@ -812,6 +812,24 @@ void chalkVRectangle(axes start, axes end)
     glEnd();
 }
 
+void chalkSemiCircle(axes center, float radius, float start_angle, float end_angle)
+{
+    float twoPI = 2 * PI;
+
+    glBegin(GL_POINTS);
+
+    for (float i = start_angle; i <= end_angle; i += 0.001)
+    {
+        for (float disp = 0; disp <= chalkwidth; disp += 0.01)
+        {
+            glVertex2f(center.x + (sin(i)*radius), center.y + (cos(i)*radius) + disp);
+        }
+    }
+
+    glEnd();
+    glFlush();
+}
+
 void drawChalkLines()
 {
     glPushAttrib(GL_LINE_WIDTH);
@@ -835,6 +853,8 @@ void drawChalkLines()
     start.x = -start.x;
     end.x = -end.x;
     chalkVRectangle(start, end);
+    start = {(ground.corners[1].x + ground.corners[2].x)/2, GOAL_POST_Y};
+    chalkSemiCircle(start, (ground.corners[2].x - ground.corners[1].x)/4, PI/2, 3*PI/2);
     glPopMatrix();
     glPopAttrib();
     glPopAttrib();
