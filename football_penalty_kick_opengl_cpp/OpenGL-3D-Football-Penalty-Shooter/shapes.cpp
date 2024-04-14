@@ -220,12 +220,16 @@ void Defender::acceleration()       //collision of defender with poles
             }
         }
     }
+    else if(this->state.positionCurrent.z>=0.7){// Ensuring goalkeeper doesnt jump over the top pole
+        this->state.velocityCurrent.z*= -1;
+    }
     else
     {
         if (this->state.positionCurrent.x >= POLE_LENGTH / 2.0 - this->width / 2 - POLE_RADIUS ||
             this->state.positionCurrent.x <= -POLE_LENGTH / 2.0 + this->width / 2 + POLE_RADIUS)
         {
             this->state.velocityCurrent.x *= -1;
+            //this->state.accelerationCurrent[0] *= -1;
         }
     }
 }

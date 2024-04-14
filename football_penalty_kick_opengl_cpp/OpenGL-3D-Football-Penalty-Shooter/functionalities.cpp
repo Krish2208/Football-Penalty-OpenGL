@@ -4,7 +4,6 @@
 #include "shapes.h"
 #include <bits/stdc++.h>
 using namespace std;
-
 level currentLevel = NIL;
 mode currentMode = ADJUSTING;
 
@@ -163,10 +162,12 @@ void initialiseEverything()     // reset after every shoot
     if (currentLevel == EASY)   // setting parameters of defender in easy level
     {
 
+        // printf("Init called\n");
         defender.state.velocityInitial[0] = defender.state.velocityCurrent[0] = DEFENDER_SPEED_EASY;
         defender.state.velocityInitial[2] = defender.state.velocityCurrent[2] = DEFENDER_SPEED_VERTICAL;
         defender.state.velocityInitial.x = defender.state.velocityCurrent.x = DEFENDER_SPEED_EASY;
         defender.state.velocityInitial.z = defender.state.velocityCurrent.z = DEFENDER_SPEED_VERTICAL;
+        defender.move_random_dist= 50;
 
         defender.state.accelerationCurrent[0] = 0;
         defender.state.accelerationCurrent[1] = 0;
@@ -588,7 +589,7 @@ void updateGoalPostPosition(int _)      //goal post movement
     glutTimerFunc(1000 * 1 / 60.0, updateGoalPostPosition, 1 / 60.0);
 }
 
-void updateDefenderPosition(int _)      //defender motion
+void updateDefenderPosition(int yAngle)      //defender motion
 {
     static float increment = 2.0f;
     static int done = 0;
@@ -602,6 +603,8 @@ void updateDefenderPosition(int _)      //defender motion
     defender.state.timePassed += 1 / 60.0;
     double t = 1 / 60.0;
     defender.acceleration();
+    // for(int i=0; i<3; i++){
+    // printf("Current Defender Velocity on axis %d is: %f\n", i, defender.state.velocityCurrent[i]);}
 
     if (currentLevel == HUMAN)          //updting defender in human level
     {
@@ -637,9 +640,8 @@ void updateDefenderPosition(int _)      //defender motion
     }
 
 
-    if (currentLevel == EASY)       //updting defender in easy level
+    if (currentLevel == EASY || currentLevel== MEDIUM || currentLevel == HARD)       //updting defender in easy level
     {
-
         defender.state.accelerationCurrent[0] = 0;
         defender.state.accelerationCurrent[1] = 0;
         defender.state.accelerationCurrent[2] = -9.8;
@@ -649,57 +651,56 @@ void updateDefenderPosition(int _)      //defender motion
             defender.state.positionCurrent[2] = 0;
             defender.state.velocityCurrent[2] = -defender.state.velocityCurrent[2];
         }
-        for (int i = 0; i < 3; ++i)
-        {
-            defender.state.positionCurrent[i] +=
-                defender.state.velocityCurrent[i] * t + 0.5 * defender.state.accelerationCurrent[i] * t * t;
+        //Sometimes randomly move it in the wrong direction when random move is multiple of 27
+        if(defender.move_random_dist%27 == 0){
+            defender.move_random_dist *= -1;
+        }
+        float rand_move= defender.move_random_dist/100.0;
+        //printf("Random move: %f\n", rand_move);
+        // float rand_move= 1;
+        float max_distance= POLE_LENGTH/2 - POLE_RADIUS - defender.width/2;
+        //defender.state.positionCurrent[0]= 0; //resetting the position of defender
+    
+        if(yAngle<0){
+            // defender.state.positionCurrent[0] += rand_move*max_distance;
+            if(defender.state.positionCurrent[0] > rand_move*max_distance*(-1)){
+                //Set defender velocity in the correct direction
+                if(defender.state.velocityCurrent[0] > 0){
+                    defender.state.velocityCurrent[0] *= -1;
+                }
+                defender.state.positionCurrent[0] += defender.state.velocityCurrent[0] * t + 0.5 * defender.state.accelerationCurrent[0] * t * t;
+            }
+            else{
+                defender.state.positionCurrent[0] = rand_move*max_distance*(-1);
+                defender.state.velocityCurrent[0] = 0;
+                defender.state.accelerationCurrent[0] = 0;
+                //update z position
+                defender.state.positionCurrent[2] += defender.state.velocityCurrent[2] * t + 0.5 * defender.state.accelerationCurrent[2] * t * t;
+                //defender.acceleration();
+            }
 
-            defender.state.velocityCurrent[i] =
-                defender.state.velocityCurrent[i] + defender.state.accelerationCurrent[i] * t;
+        }
+        else if(yAngle==0){
+            defender.state.positionCurrent[0] = 0;
+        }
+        else{
+             if(defender.state.positionCurrent[0] < rand_move*max_distance*(1)){
+                //Set defender velocity in the correct direction
+                if(defender.state.velocityCurrent[0] < 0){
+                    defender.state.velocityCurrent[0] *= -1;
+                }
+                defender.state.positionCurrent[0] += defender.state.velocityCurrent[0] * t + 0.5 * defender.state.accelerationCurrent[0] * t * t;
+            }
+            else{
+                defender.state.positionCurrent[0] = rand_move*max_distance*(1);
+                defender.state.velocityCurrent[0] = 0;
+                defender.state.accelerationCurrent[0] = 0;
+                //update z position
+                defender.state.positionCurrent[2] += defender.state.velocityCurrent[2] * t + 0.5 * defender.state.accelerationCurrent[2] * t * t;
+                //defender.acceleration();
+            }
         }
     }
-    if (currentLevel == MEDIUM)
-    {                                                   //updting defender in easy level
-
-        defender.state.accelerationCurrent[0] = 0;
-        defender.state.accelerationCurrent[1] = 0;
-        defender.state.accelerationCurrent[2] = -9.8;
-
-        if (defender.state.positionCurrent[2] < 0)
-        {
-            defender.state.positionCurrent[2] = 0;
-            defender.state.velocityCurrent[2] = -defender.state.velocityCurrent[2];
-        }
-        for (int i = 0; i < 3; ++i)
-        {
-            defender.state.positionCurrent[i] +=
-                defender.state.velocityCurrent[i] * t + 0.5 * defender.state.accelerationCurrent[i] * t * t;
-
-            defender.state.velocityCurrent[i] =
-                defender.state.velocityCurrent[i] + defender.state.accelerationCurrent[i] * t;
-        }
-    }
-    if (currentLevel == HARD)                   //updting defender in hard level
-    {
-
-        defender.state.accelerationCurrent[0] = 0;
-        defender.state.accelerationCurrent[1] = 0;
-        defender.state.accelerationCurrent[2] = -9.8;
-
-        if (defender.state.positionCurrent[2] < 0)
-        {
-            defender.state.positionCurrent[2] = 0;
-            defender.state.velocityCurrent[2] = -defender.state.velocityCurrent[2];
-        }
-        for (int i = 0; i < 3; ++i)
-        {
-            defender.state.positionCurrent[i] +=
-                defender.state.velocityCurrent[i] * t + 0.5 * defender.state.accelerationCurrent[i] * t * t;
-
-            defender.state.velocityCurrent[i] =
-                defender.state.velocityCurrent[i] + defender.state.accelerationCurrent[i] * t;
-        }
-   }
     if (currentLevel == MOVE_POST)                          //updting defender in movepost level
     {
 
@@ -726,7 +727,7 @@ void updateDefenderPosition(int _)      //defender motion
             defender.state.accelerationCurrent[0] *= -1;
         }
     }
-    glutTimerFunc(1000 * 1 / 60.0, updateDefenderPosition, 1 / 60.0);
+    // glutTimerFunc(1000 * 1 / 60.0, updateDefenderPosition, aimArrow.yAngle);
 }
 
 int convertToTexture(const char *filename)   // for texture making

@@ -57,6 +57,7 @@ public:
     double width;
     double height;
     double armRot;
+    int move_random_dist;
     GLfloat color[4];
 
     PhysicalState state;
