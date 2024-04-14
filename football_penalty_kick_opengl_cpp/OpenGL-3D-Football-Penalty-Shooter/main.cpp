@@ -844,7 +844,7 @@ int main(int argc, char *argv[])
     groundTexture = convertAndLoadTexture("resources/grass1.txt");          //loading textures
     defenderTexture = convertAndLoadTexture("resources/defender1.txt");
     font = convertAndLoadTexture("resources/fonts/Ubuntu Mono Nerd Font Complete Mono.txt");
-    ads = convertAndLoadTexture("resources/ads.txt");
+    ads = convertAndLoadTexture("resources/IITI.txt");
     leftArm = convertAndLoadTexture("resources/left_arm.txt");
     rightArm = convertAndLoadTexture("resources/right_arm.txt");
     glutMouseFunc(NULL);
