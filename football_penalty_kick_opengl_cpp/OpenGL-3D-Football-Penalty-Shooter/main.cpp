@@ -48,7 +48,7 @@ void updatePos(PhysicalState &p, double t)  // update position of ball
                     // p.velocityCurrent.x = v * sin(theta) * p.elasticity;
                     // Take friction into account
                     p.velocityCurrent.y = -v * cos(theta) * p.elasticity + p.friction * p.velocityCurrent.y;
-                    p.velocityCurrent.x = v * sin(theta) * p.elasticity + p.friction * p.velocityCurrent.x;
+                    p.velocityCurrent.x = v * sin(theta) * p.elasticity - p.friction * p.velocityCurrent.x;
                 }
                 else if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && poleCollided[0])
                 {
@@ -77,7 +77,7 @@ void updatePos(PhysicalState &p, double t)  // update position of ball
                     // p.velocityCurrent.x = v * sin(theta) * p.elasticity;
                     // Take friction into account
                     p.velocityCurrent.y = -v * cos(theta) * p.elasticity + p.friction * p.velocityCurrent.y;
-                    p.velocityCurrent.x = v * sin(theta) * p.elasticity + p.friction * p.velocityCurrent.x;
+                    p.velocityCurrent.x = v * sin(theta) * p.elasticity - p.friction * p.velocityCurrent.x;
                 }
                 else if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && poleCollided[0])
                 {
@@ -110,7 +110,7 @@ void updatePos(PhysicalState &p, double t)  // update position of ball
                     // p.velocityCurrent.y = v * cos(theta) * p.elasticity;         // changing velocity 
                     // p.velocityCurrent.x = -v * sin(theta) * p.elasticity;
                     // Take friction into account
-                    p.velocityCurrent.y = v * cos(theta) * p.elasticity + p.friction * p.velocityCurrent.y;
+                    p.velocityCurrent.y = v * cos(theta) * p.elasticity - p.friction * p.velocityCurrent.y;
                     p.velocityCurrent.x = -v * sin(theta) * p.elasticity + p.friction * p.velocityCurrent.x;
                 }
                 else if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && poleCollided[2])
@@ -139,7 +139,7 @@ void updatePos(PhysicalState &p, double t)  // update position of ball
                     // p.velocityCurrent.y = v * cos(theta) * p.elasticity;         // changing velocity 
                     // p.velocityCurrent.x = -v * sin(theta) * p.elasticity;
                     // Take friction into account
-                    p.velocityCurrent.y = v * cos(theta) * p.elasticity + p.friction * p.velocityCurrent.y;
+                    p.velocityCurrent.y = v * cos(theta) * p.elasticity - p.friction * p.velocityCurrent.y;
                     p.velocityCurrent.x = -v * sin(theta) * p.elasticity + p.friction * p.velocityCurrent.x;
                 }
                 else if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && poleCollided[2])
@@ -175,7 +175,7 @@ void updatePos(PhysicalState &p, double t)  // update position of ball
                     // p.velocityCurrent.y = v * cos(theta) * p.elasticity;         // changing velocity 
                     // p.velocityCurrent.z = -v * sin(theta) * p.elasticity;
                     // Take friction into account
-                    p.velocityCurrent.y = v * cos(theta) * p.elasticity + p.friction * p.velocityCurrent.y;
+                    p.velocityCurrent.y = v * cos(theta) * p.elasticity - p.friction * p.velocityCurrent.y;
                     p.velocityCurrent.z = -v * sin(theta) * p.elasticity + p.friction * p.velocityCurrent.z;
                 }
                 else if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && poleCollided[1])
@@ -207,7 +207,7 @@ void updatePos(PhysicalState &p, double t)  // update position of ball
                     // p.velocityCurrent.y = v * cos(theta) * p.elasticity;
                     // p.velocityCurrent.z = -v * sin(theta) * p.elasticity;        // changing velocity 
                     // Take friction into account
-                    p.velocityCurrent.y = v * cos(theta) * p.elasticity + p.friction * p.velocityCurrent.y;
+                    p.velocityCurrent.y = v * cos(theta) * p.elasticity - p.friction * p.velocityCurrent.y;
                     p.velocityCurrent.z = -v * sin(theta) * p.elasticity + p.friction * p.velocityCurrent.z;
                 }
                 else if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && poleCollided[1])
@@ -240,8 +240,8 @@ void updatePos(PhysicalState &p, double t)  // update position of ball
         {
             p.positionCurrent[2] = 0;
             p.velocityCurrent[2] = -p.velocityCurrent[2] * p.elasticity;
-            p.velocityCurrent[0] = p.velocityCurrent[0] * p.elasticity;
-            p.velocityCurrent[1] = p.velocityCurrent[1] * p.elasticity;
+            p.velocityCurrent[0] = p.velocityCurrent[0] * 0.95;
+            p.velocityCurrent[1] = p.velocityCurrent[1] * 0.95;
             // for (int i = 0; i < 3; ++i)
             // {
             //     p.velocityCurrent[i] = p.elasticity * p.velocityCurrent[i];
@@ -654,6 +654,7 @@ double sq(double x)
 
 void idle()
 {
+    
     if (!currentlyWaiting)
     {
         if (currentMode == POWERING_ACC && !downKeys[112])
@@ -689,6 +690,8 @@ void idle()
             glutTimerFunc(10, updatePosCallBack, 0);
             currentlyWaiting = true;
             powering_set = false;
+            srand(time(NULL));
+            defender.move_random_dist= rand()%100;
         }
         if (currentMode == POWERING && downKeys[27])
         {
@@ -746,6 +749,7 @@ void idle()
                     }
                 }
             }
+            glutTimerFunc(1000 * 1 / 60.0, updateDefenderPosition, aimArrow.yAngle);
         }
         if (currentMode == POWERING && downKeys[27])
         {
@@ -805,6 +809,12 @@ void handlePassiveMouse(int x, int y)
 
 void myInit(void)
 {
+    int angle_direction= 1;
+    if(aimArrow.yAngle<0)
+    {
+        angle_direction = -1;
+    }
+    printf("Printing direction from main: %d\n", angle_direction);
     glClearColor(137 / 255.0, 206 / 255.0, 255 / 255.0, 0);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_COLOR_MATERIAL);
@@ -819,7 +829,7 @@ void myInit(void)
     glEnable(GL_NORMALIZE); // Automatically normalize normals
     glShadeModel(GL_SMOOTH);
     backgroundMusicPlayer(0);
-    updateDefenderPosition(0);
+    updateDefenderPosition(angle_direction);
     updateGoalPostPosition(0);
     glutSetCursor(GLUT_CURSOR_NONE);
     glEnable(GL_MULTISAMPLE);
@@ -852,7 +862,6 @@ int main(int argc, char *argv[])
     glutMouseFunc(NULL);
     glutDisplayFunc(draw);
     glutIdleFunc(idle);
-
     myInit();
     glutMainLoop();
 
