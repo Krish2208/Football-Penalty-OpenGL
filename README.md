@@ -1,4 +1,4 @@
-# football_penalty_kick_opengl_cpp
+# CS 352 Project | Football Penalty Shootout Game
 FootBall Penalty Shooter, as the name suggests is a game similar to football penalties in real life. It can be a 2-player game or an interactive game with the computer.
 
 The Functionalities are:-
