@@ -135,11 +135,6 @@ void initialiseEverything()     // reset after every shoot
     poles[2].Type = R_POLE;
     poles[2].height = POLE_HEIGHT;
 
-    displayBoard.width = 20;
-    displayBoard.height = 20;
-    displayBoard.length = 10;
-    displayBoard.color[0] = {1.0, 0.0, 0.0, 1.0};
-
     temp = {0, 0, 0};
     aimArrow.start = temp;
     temp = {0, 2, 0};
@@ -328,14 +323,6 @@ void drawGoalPost()         //drawing goal post
     }
 }
 
-void drawDisplayBoard()         //drawing display board
-{
-    glPushMatrix();
-    glTranslated(GOAL_POST_X, GOAL_POST_Y - 10, 0);
-    displayBoard.draw();
-    glPopMatrix();
-}
-
 void cameraPosition(axes point, double distance, double zAngle, double xAngle)
 {
     gluLookAt(point.x + distance * (cos(DEG2GRAD(zAngle)) * cos(DEG2GRAD(xAngle))),
@@ -484,7 +471,7 @@ void drawHUD()
     { 
         if (currentMode == CHOOSE && Tries % 5 == 0)        //drawing choose page
         {
-            prevGoals = Goals;
+            // prevGoals = Goals;
             const char *instructions = R"INSTRUCT(
             Choose:-
 
@@ -666,7 +653,8 @@ void updateDefenderPosition(int yAngle)      //defender motion
         }
         //Sometimes randomly move it in the wrong direction when random move is multiple of 27
         if(defender.move_random_dist%27 == 0){
-            defender.move_random_dist *= -1;
+            //Reverse the direction of movement
+            yAngle *= -1;
         }
         float rand_move= defender.move_random_dist/100.0;
         //printf("Random move: %f\n", rand_move);
@@ -1073,7 +1061,7 @@ void resultMsg()            //printing results
             if (Tries % 5 == 0)
             {
              
-                if (Goals > 5 - Goals)
+                if (prevGoals > 2)
                 {
                     msg = "A-WINS!";
                 }
@@ -1122,14 +1110,14 @@ void resultMsg()            //printing results
         if (!determineSphere)
         {
             // msg = "";
-            cout << "was in not sphere\n";
+            // cout << "was in not sphere\n";
             message = "";
             toWrite = false;
         }
         if (Tries % 5 == 0)
         {
     
-            if (Goals > 5 - Goals)
+            if (prevGoals > 2)
             {
                 message = "A-WINS!";
             }

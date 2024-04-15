@@ -349,8 +349,6 @@ void draw()
     glColor4f(1.0, 1.0, 1.0, 0.7);
     drawGoalPost();
 
-    drawDisplayBoard();
-
     glPopAttrib();
     glPopMatrix();
 
@@ -743,8 +741,8 @@ void idle()
                     {
                         currentMode = CHOOSE;
                         rotateMsg(0);
+                        prevGoals = Goals;
                         Goals = 0;
-                        prevGoals = 0;
                         Tries = 0;
                     }
                 }
