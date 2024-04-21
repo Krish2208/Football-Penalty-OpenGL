@@ -27,36 +27,7 @@ void updatePos(PhysicalState &p, double t)  // update position of ball
     {                                               // checking collision with left Pole
         if (p.positionCurrent.z < POLE_HEIGHT && p.positionCurrent.z > 0.0)
         {
-            if (currentLevel == MOVE_POST)      // special case in which goalpost is moving
-            {
-                axes t = {-POLE_LENGTH / 2 + poles[0].state.positionCurrent[0], GOAL_POST_Y, p.positionCurrent.z};
-                if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && !poleCollided[0])
-                {
-                    poleCollided[0] = true;
-                    double alpha, beta, theta;                              //finding angles
-                    beta = atan(p.velocityCurrent.y / p.velocityCurrent.x);
-                    axes vec;
-                    for (int i = 0; i < 3; ++i)
-                    {
-                        vec[i] = t[i] - p.positionCurrent[i];
-                    }
-                    alpha = atan(vec.y / vec.x);
-                    theta = PI / 2.0 - beta + 2 * alpha;
-                    double v = p.velocityCurrent.x * p.velocityCurrent.x + p.velocityCurrent.y * p.velocityCurrent.y;
-                    v = sqrt(v);
-                    // p.velocityCurrent.y = -v * cos(theta) * p.elasticity;       // changing velocity 
-                    // p.velocityCurrent.x = v * sin(theta) * p.elasticity;
-                    // Take friction into account
-                    p.velocityCurrent.y = -v * cos(theta) * p.elasticity + p.friction * p.velocityCurrent.y;
-                    p.velocityCurrent.x = v * sin(theta) * p.elasticity - p.friction * p.velocityCurrent.x;
-                }
-                else if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && poleCollided[0])
-                {
-                    poleCollided[0] = false;
-                }
-            }
-            else        // normal case
-            {
+                   // normal case
 
                 axes t = {-POLE_LENGTH / 2, GOAL_POST_Y, p.positionCurrent.z};
                 if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && !poleCollided[0])
@@ -83,43 +54,11 @@ void updatePos(PhysicalState &p, double t)  // update position of ball
                 {
                     poleCollided[0] = false;
                 }
-            }
         }
     }
-    {                                                  //checking colision with right pole
+                                                      //checking colision with right pole
         if (p.positionCurrent.z < POLE_HEIGHT && p.positionCurrent.z > 0.0)
         {
-            if (currentLevel == MOVE_POST)              // special case in which goalpost is moving
-            {
-
-                axes t = {POLE_LENGTH / 2 + poles[2].state.positionCurrent[0], GOAL_POST_Y, p.positionCurrent.z};
-                if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && !poleCollided[2])
-                {
-                    poleCollided[2] = true;
-                    double alpha, beta, theta;
-                    beta = atan(p.velocityCurrent.y / p.velocityCurrent.x);
-                    axes vec;
-                    for (int i = 0; i < 3; ++i)
-                    {
-                        vec[i] = t[i] - p.positionCurrent[i];
-                    }
-                    alpha = atan(vec.y / vec.x);
-                    theta = PI / 2.0 - beta + 2 * alpha;
-                    double v = p.velocityCurrent.x * p.velocityCurrent.x + p.velocityCurrent.y * p.velocityCurrent.y;
-                    v = sqrt(v);
-                    // p.velocityCurrent.y = v * cos(theta) * p.elasticity;         // changing velocity 
-                    // p.velocityCurrent.x = -v * sin(theta) * p.elasticity;
-                    // Take friction into account
-                    p.velocityCurrent.y = v * cos(theta) * p.elasticity - p.friction * p.velocityCurrent.y;
-                    p.velocityCurrent.x = -v * sin(theta) * p.elasticity + p.friction * p.velocityCurrent.x;
-                }
-                else if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && poleCollided[2])
-                {
-                    poleCollided[2] = false;
-                }
-            }
-            else
-            {
 
                 axes t = {POLE_LENGTH / 2, GOAL_POST_Y, p.positionCurrent.z};
                 if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && !poleCollided[2])
@@ -146,46 +85,8 @@ void updatePos(PhysicalState &p, double t)  // update position of ball
                 {
                     poleCollided[2] = false;
                 }
-            }
-        }
-    }
-    {                                                   // checking collision with upper pole
+        }                                                  // checking collision with upper pole
 
-        if (currentLevel != MOVE_POST)          // special case in which goalpost is moving
-        {
-
-            if (p.positionCurrent.x < POLE_LENGTH / 2 + POLE_RADIUS &&
-                p.positionCurrent.x > -POLE_LENGTH / 2 - POLE_RADIUS)
-            {
-                axes t = {p.positionCurrent.x, GOAL_POST_Y, POLE_RADIUS + POLE_HEIGHT};
-                if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && !poleCollided[1])
-                {
-                    poleCollided[1] = true;
-                    double alpha, beta, theta;
-                    beta = atan(p.velocityCurrent.y / p.velocityCurrent.z);
-                    axes vec;
-                    for (int i = 0; i < 3; ++i)
-                    {
-                        vec[i] = t[i] - p.positionCurrent[i];
-                    }
-                    alpha = atan(vec.y / vec.z);
-                    theta = PI / 2.0 - beta + 2 * alpha;
-                    double v = p.velocityCurrent.z * p.velocityCurrent.z + p.velocityCurrent.y * p.velocityCurrent.y;
-                    v = sqrt(v);
-                    // p.velocityCurrent.y = v * cos(theta) * p.elasticity;         // changing velocity 
-                    // p.velocityCurrent.z = -v * sin(theta) * p.elasticity;
-                    // Take friction into account
-                    p.velocityCurrent.y = v * cos(theta) * p.elasticity - p.friction * p.velocityCurrent.y;
-                    p.velocityCurrent.z = -v * sin(theta) * p.elasticity + p.friction * p.velocityCurrent.z;
-                }
-                else if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && poleCollided[1])
-                {
-                    poleCollided[1] = false;
-                }
-            }
-        }
-        else
-        {
             if (p.positionCurrent.x < poles[1].state.positionCurrent[0] + POLE_LENGTH / 2 + POLE_RADIUS &&
                 p.positionCurrent.x > poles[1].state.positionCurrent[0] - POLE_LENGTH / 2 - POLE_RADIUS)
             {
@@ -215,10 +116,7 @@ void updatePos(PhysicalState &p, double t)  // update position of ball
                     poleCollided[1] = false;
                 }
             }
-        }
-    }
-
-    {                                                               //checking  collision with goalkeeper
+                                                              //checking  collision with goalkeeper
         if (p.positionCurrent.x < defender.state.positionCurrent.x + defender.width / 2.0 &&
             p.positionCurrent.x > defender.state.positionCurrent.x - defender.width / 2.0 &&
             p.positionCurrent.z < defender.height &&
@@ -226,9 +124,7 @@ void updatePos(PhysicalState &p, double t)  // update position of ball
         {
             p.velocityCurrent.y *= -p.elasticity;        // changing velocity 
         }
-    }
-
-    {                                                       // applying gravity and ground bouncing effects on ball
+                                                      // applying gravity and ground bouncing effects on ball
         
         for (int i = 0; i < 3; ++i)                         //updating position
         {
@@ -254,21 +150,11 @@ void updatePos(PhysicalState &p, double t)  // update position of ball
                 p.velocityCurrent[i] = 0;
             }
         }
-        if (currentLevel == MOVE_POST)
-        {
-            if ((p.positionCurrent[0] <= poles[2].state.positionCurrent[0] - POLE_RADIUS + POLE_LENGTH / 2) && (p.positionCurrent[0] >= poles[0].state.positionCurrent[1] + POLE_RADIUS - POLE_LENGTH / 2) &&
-                (p.positionCurrent[2] <= POLE_HEIGHT) && (p.positionCurrent[1] <= GOAL_POST_Y + 0.6 && p.positionCurrent[1] >= GOAL_POST_Y) && !oncePassed)
-            {
-                oncePassed = true;
-                message = "GOAL!";
-            }
-        }
         if (fabs(p.positionCurrent[2]) <= THRESHOLD_ZERO)
         {
             p.positionCurrent[2] = 0;
             p.velocityCurrent[2] *= p.elasticity;
         }
-    }
     if (p.positionCurrent.y + BALL_RADIUS > 20.0 || p.positionCurrent.y - BALL_RADIUS < -20.0)
     {
         p.velocityCurrent.y = -p.velocityCurrent.y;
@@ -316,16 +202,13 @@ void draw()
         glutWarpPointer(WIDTH / 2, HEIGHT);     //set mouse position
         firstTime = false;
     }
-    GLfloat lightColor0[] = {1.0f, 1.0f, 1.0f, 0.7f};    // Color (0.5, 0.5, 0.5)
-    GLfloat lightPos0[] = {0.0f, -100.0f, 100.0f, 1.0f}; // Positioned at (4, 0, 8)
+    GLfloat lightColor0[] = {1.0f, 1.0f, 1.0f, 0.7f};    // Color 
+    GLfloat lightPos0[] = {0.0f, -100.0f, 100.0f, 1.0f}; // Position
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
-    GLfloat lightColor1[] = {0.3f, 0.3f, 0.1f, 1.0f};  // Color (0.5, 0.5, 0.5)
-    GLfloat lightPos1[] = {-1.0f, -1.0f, -1.0f, 1.0f}; // Positioned at (4, 0, 8)
-    // glLightfv(GL_LIGHT1, GL_AMBIENT, lightColor1);
 
-    GLfloat lightColor2[] = {0.2f, 0.2f, 0.2f, 1.0f};  // Color (0.5, 0.5, 0.5)
-    GLfloat lightPos2[] = {0.0f, 100.0f, 0.10f, 1.0f}; // Positioned at (4, 0, 8)
+    GLfloat lightColor2[] = {0.2f, 0.2f, 0.2f, 1.0f};  // Color
+    GLfloat lightPos2[] = {0.0f, 100.0f, 0.10f, 1.0f}; // Position
     glLightfv(GL_LIGHT2, GL_DIFFUSE, lightColor2);
     glLightfv(GL_LIGHT2, GL_POSITION, lightPos2);
 
@@ -517,15 +400,6 @@ void handleKeypress(unsigned char key, int x, int y) // when key pressed
             defender.state.velocityInitial.z = defender.state.velocityCurrent.z = DEFENDER_SPEED_VERTICAL;
             currentMode = ADJUSTING;
         }
-        else if (key == '5')
-        {
-            currentLevel = MOVE_POST;
-            poles[0].state.velocityCurrent[0] = 5;
-            poles[2].state.velocityCurrent[0] = 5;
-            poles[1].state.velocityCurrent[0] = 5;
-            defender.state.velocityCurrent[0] = 10;
-            currentMode = ADJUSTING;
-        }
         if (key == 27)  //27 means ESC
         {
             currentMode = HELP;
@@ -711,29 +585,26 @@ void idle()
                     *determineSphere = sphere;
 
                     scoredGoal = isItGoal(*determineSphere);
-                    if (currentLevel != MOVE_POST)
-                    {
 
                         if (scoredGoal)
                         {
                             Goals++;
                             system("paplay resources/goal.wav&");
                         }
-                    }
-                    else
-                    {
+                    // else
+                    // {
 
-                        if (scoredGoal)
-                        {
-                            message = "GOAL!";
-                            Goals++;
-                            system("paplay resources/goal.wav&");   // sound effect when goal is shoot
-                        }
-                        else
-                        {
-                            message = "MISS!";
-                        }
-                    }
+                    //     if (scoredGoal)
+                    //     {
+                    //         message = "GOAL!";
+                    //         Goals++;
+                    //         system("paplay resources/goal.wav&");   // sound effect when goal is shoot
+                    //     }
+                    //     else
+                    //     {
+                    //         message = "MISS!";
+                    //     }
+                    // }
 
                     glutTimerFunc(1000 * RESET_TIME, initialiseEverythingCallback, 0);
                     Tries++;

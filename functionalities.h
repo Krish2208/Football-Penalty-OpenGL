@@ -89,7 +89,6 @@ enum level
     EASY,
     MEDIUM,
     HARD,
-    MOVE_POST,
     NIL
 };
 

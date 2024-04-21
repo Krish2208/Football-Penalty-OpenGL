@@ -202,25 +202,7 @@ void FlatArrow::drawWithAngles()  // drawing arrow of ball
 
 void Defender::acceleration()       //collision of defender with poles
 {
-    if (currentLevel == MOVE_POST)
-    {
-
-        if (GOAL_POST_X + POLE_LENGTH / 2 - POLE_RADIUS + poles[2].state.positionCurrent[0] - this->state.positionCurrent.x <= 2 ||
-            this->state.positionCurrent.x - (GOAL_POST_X - POLE_LENGTH / 2 + POLE_RADIUS + poles[0].state.positionCurrent[0]) <= 2)
-        {
-            this->state.velocityCurrent.x *= -1;
-            if (this->state.positionCurrent.x - (GOAL_POST_X - POLE_LENGTH / 2 + POLE_RADIUS + poles[0].state.positionCurrent[0]) <= 2)
-            {
-
-                this->state.positionCurrent[0] += 0.2;
-            }
-            else
-            {
-                this->state.positionCurrent[0] -= 0.2;
-            }
-        }
-    }
-    else if(this->state.positionCurrent.z>=0.7){// Ensuring goalkeeper doesnt jump over the top pole
+    if(this->state.positionCurrent.z>=0.7){// Ensuring goalkeeper doesnt jump over the top pole
         this->state.velocityCurrent.z*= -1;
     }
     else

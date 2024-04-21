@@ -83,17 +83,6 @@ ostream &operator<<(ostream &out, PhysicalState &p)
 
 bool isItGoal(PhysicalState ball)       //checking goal condition
 {
-    if (currentLevel == MOVE_POST)
-    {
-        if ((ball.positionCurrent[0] <= poles[2].state.positionCurrent[0] - POLE_RADIUS + POLE_LENGTH / 2) &&
-            (ball.positionCurrent[0] >= poles[0].state.positionCurrent[0] + POLE_RADIUS - POLE_LENGTH / 2) &&
-            (ball.positionCurrent[2] <= POLE_HEIGHT) && (ball.positionCurrent[1] > GOAL_POST_Y))
-            return true;
-        else
-            return false;
-    }
-    else
-    {
 
         if ((ball.positionCurrent[0] <= -POLE_RADIUS + POLE_LENGTH / 2) &&
             (ball.positionCurrent[0] >= +POLE_RADIUS - POLE_LENGTH / 2) &&
@@ -101,7 +90,6 @@ bool isItGoal(PhysicalState ball)       //checking goal condition
             return true;
         else
             return false;
-    }
 }
 
 void backgroundMusicPlayer(int _)   //plays sound
@@ -257,15 +245,6 @@ void initialiseEverything()     // reset after every shoot
         poles[2].state.positionCurrent[0] = 0;
         poles[1].state.positionCurrent[0] = 0;
     }
-    if (currentLevel == MOVE_POST)  // setting parameters of defender in move post level
-    {
-        poles[0].state.velocityCurrent[0] = 5;
-        poles[2].state.velocityCurrent[0] = 5;
-        poles[1].state.velocityCurrent[0] = 5;
-        defender.state.velocityCurrent[0] = 5;
-    }
-   
-
                                                 //updating ball position
     sphereCamera.xAngle = -90.0f;
     sphereCamera.zAngle = 15.0f;
@@ -483,7 +462,6 @@ void drawHUD()
               MEDIUM - 3
             HARD - 4
 
-              MOVE POST - 5
             )INSTRUCT";
             glPushMatrix();
             glRotatef(90 + sphereCamera.xAngle, 0, 0, 1);
@@ -702,33 +680,7 @@ void updateDefenderPosition(int yAngle)      //defender motion
             }
         }
     }
-    if (currentLevel == MOVE_POST)                          //updting defender in movepost level
-    {
-
-        for (int i = 0; i < 3; ++i)
-        {
-
-            defender.state.positionCurrent[i] =
-                defender.state.velocityCurrent[i] * t + 0.5 * defender.state.accelerationCurrent[i] * t * t +
-                defender.state.positionCurrent[i];
-            defender.state.velocityCurrent[i] =
-                defender.state.velocityCurrent[i] + defender.state.accelerationCurrent[i] * t;
-        }
-
-        if (defender.state.positionCurrent[2] <= 0)
-        {
-            defender.state.positionCurrent[2] = 0;
-            defender.state.velocityCurrent[2] = 0;
-            defender.state.accelerationCurrent[2] = 0;
-        }
-
-        if (defender.state.positionCurrent[0] >= 15 || defender.state.positionCurrent[0] <= -15)
-        {
-            defender.state.velocityCurrent[0] *= -1;
-            defender.state.accelerationCurrent[0] *= -1;
-        }
-    }
-    // glutTimerFunc(1000 * 1 / 60.0, updateDefenderPosition, aimArrow.yAngle);
+    
 }
 
 int convertToTexture(const char *filename)   // for texture making
@@ -1030,9 +982,6 @@ void fun(string msg)
 }
 void resultMsg()            //printing results
 {
-    if (currentLevel != MOVE_POST)
-    {
-
         bool toWrite = true;
 
         string msg = "MISS!";
@@ -1077,99 +1026,98 @@ void resultMsg()            //printing results
             
         }
         glPopMatrix();
-    }
-    else
-    {
-        glPushMatrix();
+    // else
+    // {
+    //     glPushMatrix();
 
-        float col[] = {132 / 255.0, 121 / 255.0, 150 / 255.0, 0.7};
-        //    float col[] = {1,0,0,1};
+    //     float col[] = {132 / 255.0, 121 / 255.0, 150 / 255.0, 0.7};
+    //     //    float col[] = {1,0,0,1};
 
-        float distance = sphereCamera.distance - 4;
+    //     float distance = sphereCamera.distance - 4;
 
-        float colin[] = {1.0, 1.0, 1.0, 0.7};
-        glTranslatef(distance * (cos(DEG2GRAD(sphereCamera.zAngle)) * cos(DEG2GRAD(sphereCamera.xAngle))),
-                     distance * (cos(DEG2GRAD(sphereCamera.zAngle)) * sin(DEG2GRAD(sphereCamera.xAngle))),
-                     distance * sin(DEG2GRAD(sphereCamera.zAngle)));
-        glTranslatef(toLookAt.x, toLookAt.y, toLookAt.z);
-        glRotatef(90 + sphereCamera.xAngle + textRotX, 0, 0, 1);
-        glRotatef(-sphereCamera.zAngle, 1, 0, 0);
-        glScalef(0.75, 0.75, 0.75);
+    //     float colin[] = {1.0, 1.0, 1.0, 0.7};
+    //     glTranslatef(distance * (cos(DEG2GRAD(sphereCamera.zAngle)) * cos(DEG2GRAD(sphereCamera.xAngle))),
+    //                  distance * (cos(DEG2GRAD(sphereCamera.zAngle)) * sin(DEG2GRAD(sphereCamera.xAngle))),
+    //                  distance * sin(DEG2GRAD(sphereCamera.zAngle)));
+    //     glTranslatef(toLookAt.x, toLookAt.y, toLookAt.z);
+    //     glRotatef(90 + sphereCamera.xAngle + textRotX, 0, 0, 1);
+    //     glRotatef(-sphereCamera.zAngle, 1, 0, 0);
+    //     glScalef(0.75, 0.75, 0.75);
 
-        bool toWrite = true;
+    //     bool toWrite = true;
 
         
-        if (message == "MISS!")
-        {
-            currentTextColor = {1.0, 0.3, 0.3, 1};
-        }
-        else
-        {
-            currentTextColor = {0.3, 1.0, 0.3, 1};
-        }
-        if (!determineSphere)
-        {
-            // msg = "";
-            // cout << "was in not sphere\n";
-            message = "";
-            toWrite = false;
-        }
-        if (Tries % 5 == 0)
-        {
+    //     if (message == "MISS!")
+    //     {
+    //         currentTextColor = {1.0, 0.3, 0.3, 1};
+    //     }
+    //     else
+    //     {
+    //         currentTextColor = {0.3, 1.0, 0.3, 1};
+    //     }
+    //     if (!determineSphere)
+    //     {
+    //         // msg = "";
+    //         // cout << "was in not sphere\n";
+    //         message = "";
+    //         toWrite = false;
+    //     }
+    //     if (Tries % 5 == 0)
+    //     {
     
-            if (prevGoals > 2)
-            {
-                message = "A-WINS!";
-            }
-            else
-            {
-                message = "D-WINS";
-            }
+    //         if (prevGoals > 2)
+    //         {
+    //             message = "A-WINS!";
+    //         }
+    //         else
+    //         {
+    //             message = "D-WINS";
+    //         }
 
-        }
-        if (toWrite)
-        {
-            GLUquadric *quad = gluNewQuadric();
-            glPushMatrix();
-            glColor4fv(col);
-            glScalef(2, 0.5, 1);
-            glRotatef(90, 1, 0, 0);
-            // gluSphere(sphere, radius, slices, stacks);
-            gluCylinder(quad, 1, 1, 1, 40, 40);
-            // gluDisk(quad, 0.9, 1, 40, 40);
-            glColor4fv(colin);
-            // gluDisk(quad, 0, 0.9, 40, 40);
+    //     }
+    //     if (toWrite)
+    //     {
+    //         GLUquadric *quad = gluNewQuadric();
+    //         glPushMatrix();
+    //         glColor4fv(col);
+    //         glScalef(2, 0.5, 1);
+    //         glRotatef(90, 1, 0, 0);
+    //         // gluSphere(sphere, radius, slices, stacks);
+    //         gluCylinder(quad, 1, 1, 1, 40, 40);
+    //         // gluDisk(quad, 0.9, 1, 40, 40);
+    //         glColor4fv(colin);
+    //         // gluDisk(quad, 0, 0.9, 40, 40);
 
-            glPopMatrix();
+    //         glPopMatrix();
 
-            glPushMatrix();
+    //         glPushMatrix();
 
-            glPushMatrix();
-            glColor4fv(col);
-            glScalef(2, 0.5, 1);
-            glTranslatef(0, -1, 0);
-            glRotatef(90, 1, 0, 0);
-            gluDisk(quad, 0.9, 1, 40, 40);
-            glColor4fv(colin);
-            gluDisk(quad, 0, 0.9, 40, 40);
-            glPopMatrix();
-            gluDeleteQuadric(quad);
-            glPopMatrix();
+    //         glPushMatrix();
+    //         glColor4fv(col);
+    //         glScalef(2, 0.5, 1);
+    //         glTranslatef(0, -1, 0);
+    //         glRotatef(90, 1, 0, 0);
+    //         gluDisk(quad, 0.9, 1, 40, 40);
+    //         glColor4fv(colin);
+    //         gluDisk(quad, 0, 0.9, 40, 40);
+    //         glPopMatrix();
+    //         gluDeleteQuadric(quad);
+    //         glPopMatrix();
 
-            glPushMatrix();
-            glTranslatef(0, .001, -0.5);
-            glRotatef(180, 0, 0, 1);
-            // writeText(msg, font, CENTER);
-            writeText(message, font, CENTER);
+    //         glPushMatrix();
+    //         glTranslatef(0, .001, -0.5);
+    //         glRotatef(180, 0, 0, 1);
+    //         // writeText(msg, font, CENTER);
+    //         writeText(message, font, CENTER);
 
-            glPopMatrix();
+    //         glPopMatrix();
 
-            glPushMatrix();
-            glTranslatef(0, -0.501, -0.5);
-            // writeText(msg, font, CENTER);
-            writeText(message, font, CENTER);
-            glPopMatrix();
-        }
-        glPopMatrix();
-    }
+    //         glPushMatrix();
+    //         glTranslatef(0, -0.501, -0.5);
+    //         // writeText(msg, font, CENTER);
+    //         writeText(message, font, CENTER);
+    //         glPopMatrix();
+    //     }
+    //     glPopMatrix();
+    // }
 }
