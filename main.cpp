@@ -1,5 +1,6 @@
 // This file contains the order of function calls and draw objects in our project
 
+// Importing necessary libraries
 #include <GL/glut.h>
 #include <bits/stdc++.h>
 #include <GL/gl.h>
@@ -10,6 +11,7 @@
 #include "shapes.h"
 using namespace std;
 
+// Defining global variables
 bool poleCollided[3];
 bool stopEverything = false;
 unsigned int Tries = 0, Goals = 0;
@@ -18,143 +20,168 @@ string message = "MISS!";
 bool oncePassed = false;
 vector<float> currentTextColor = {1, 1, 1, 1};
 
+// Function to show result message
 void showScore();
 
-void updatePos(PhysicalState &p, double t)  // update position of ball
+void updatePos(PhysicalState &p, double t) // update position of ball
 {
+    // updating the time
     p.timePassed += t;
 
-    {                                               // checking collision with left Pole
+    { // checking collision with left Pole
         if (p.positionCurrent.z < POLE_HEIGHT && p.positionCurrent.z > 0.0)
         {
-                   // normal case
+            axes t = {-POLE_LENGTH / 2, GOAL_POST_Y, p.positionCurrent.z};
+            if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && !poleCollided[0])
+            {
+                // collision detected
+                poleCollided[0] = true;
+                double alpha, beta, theta;
 
-                axes t = {-POLE_LENGTH / 2, GOAL_POST_Y, p.positionCurrent.z};
-                if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && !poleCollided[0])
+                // calculating angles
+                beta = atan(p.velocityCurrent.y / p.velocityCurrent.x);
+                axes vec;
+
+                // calculating vector
+                for (int i = 0; i < 3; ++i)
                 {
-                    poleCollided[0] = true;
-                    double alpha, beta, theta;
-                    beta = atan(p.velocityCurrent.y / p.velocityCurrent.x);
-                    axes vec;
-                    for (int i = 0; i < 3; ++i)
-                    {
-                        vec[i] = t[i] - p.positionCurrent[i];
-                    }
-                    alpha = atan(vec.y / vec.x);
-                    theta = PI / 2.0 - beta + 2 * alpha;
-                    double v = p.velocityCurrent.x * p.velocityCurrent.x + p.velocityCurrent.y * p.velocityCurrent.y;
-                    v = sqrt(v);
-                    // p.velocityCurrent.y = -v * cos(theta) * p.elasticity;        // changing velocity 
-                    // p.velocityCurrent.x = v * sin(theta) * p.elasticity;
-                    // Take friction into account
-                    p.velocityCurrent.y = -v * cos(theta) * p.elasticity + p.friction * p.velocityCurrent.y;
-                    p.velocityCurrent.x = v * sin(theta) * p.elasticity - p.friction * p.velocityCurrent.x;
+                    vec[i] = t[i] - p.positionCurrent[i];
                 }
-                else if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && poleCollided[0])
-                {
-                    poleCollided[0] = false;
-                }
+
+                // calculating angles
+                alpha = atan(vec.y / vec.x);
+                theta = PI / 2.0 - beta + 2 * alpha;
+
+                // calculating velocity
+                double v = p.velocityCurrent.x * p.velocityCurrent.x + p.velocityCurrent.y * p.velocityCurrent.y;
+                v = sqrt(v);
+                // Take friction into account
+                p.velocityCurrent.y = -v * cos(theta) * p.elasticity + p.friction * p.velocityCurrent.y;
+                p.velocityCurrent.x = v * sin(theta) * p.elasticity - p.friction * p.velocityCurrent.x;
+            }
+            else if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && poleCollided[0])
+            {
+                poleCollided[0] = false;
+            }
         }
     }
-                                                      //checking colision with right pole
-        if (p.positionCurrent.z < POLE_HEIGHT && p.positionCurrent.z > 0.0)
+    // checking colision with right pole
+    if (p.positionCurrent.z < POLE_HEIGHT && p.positionCurrent.z > 0.0)
+    {
+        axes t = {POLE_LENGTH / 2, GOAL_POST_Y, p.positionCurrent.z};
+        if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && !poleCollided[2])
         {
 
-                axes t = {POLE_LENGTH / 2, GOAL_POST_Y, p.positionCurrent.z};
-                if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && !poleCollided[2])
-                {
-                    poleCollided[2] = true;
-                    double alpha, beta, theta;
-                    beta = atan(p.velocityCurrent.y / p.velocityCurrent.x);
-                    axes vec;
-                    for (int i = 0; i < 3; ++i)
-                    {
-                        vec[i] = t[i] - p.positionCurrent[i];
-                    }
-                    alpha = atan(vec.y / vec.x);
-                    theta = PI / 2.0 - beta + 2 * alpha;
-                    double v = p.velocityCurrent.x * p.velocityCurrent.x + p.velocityCurrent.y * p.velocityCurrent.y;
-                    v = sqrt(v);
-                    // p.velocityCurrent.y = v * cos(theta) * p.elasticity;         // changing velocity 
-                    // p.velocityCurrent.x = -v * sin(theta) * p.elasticity;
-                    // Take friction into account
-                    p.velocityCurrent.y = v * cos(theta) * p.elasticity - p.friction * p.velocityCurrent.y;
-                    p.velocityCurrent.x = -v * sin(theta) * p.elasticity + p.friction * p.velocityCurrent.x;
-                }
-                else if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && poleCollided[2])
-                {
-                    poleCollided[2] = false;
-                }
-        }                                                  // checking collision with upper pole
+            // collision detected
+            poleCollided[2] = true;
+            double alpha, beta, theta;
 
-            if (p.positionCurrent.x < poles[1].state.positionCurrent[0] + POLE_LENGTH / 2 + POLE_RADIUS &&
-                p.positionCurrent.x > poles[1].state.positionCurrent[0] - POLE_LENGTH / 2 - POLE_RADIUS)
+            // calculating angles
+            beta = atan(p.velocityCurrent.y / p.velocityCurrent.x);
+            axes vec;
+
+            // calculating vector
+            for (int i = 0; i < 3; ++i)
             {
-                axes t = {p.positionCurrent.x + poles[1].state.positionCurrent[0], GOAL_POST_Y, POLE_RADIUS + POLE_HEIGHT};
-                if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && !poleCollided[1])
-                {
-                    poleCollided[1] = true;
-                    double alpha, beta, theta;
-                    beta = atan(p.velocityCurrent.y / p.velocityCurrent.z);
-                    axes vec;
-                    for (int i = 0; i < 3; ++i)
-                    {
-                        vec[i] = t[i] - p.positionCurrent[i];
-                    }
-                    alpha = atan(vec.y / vec.z);
-                    theta = PI / 2.0 - beta + 2 * alpha;
-                    double v = p.velocityCurrent.z * p.velocityCurrent.z + p.velocityCurrent.y * p.velocityCurrent.y;
-                    v = sqrt(v);
-                    // p.velocityCurrent.y = v * cos(theta) * p.elasticity;
-                    // p.velocityCurrent.z = -v * sin(theta) * p.elasticity;        // changing velocity 
-                    // Take friction into account
-                    p.velocityCurrent.y = v * cos(theta) * p.elasticity - p.friction * p.velocityCurrent.y;
-                    p.velocityCurrent.z = -v * sin(theta) * p.elasticity + p.friction * p.velocityCurrent.z;
-                }
-                else if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && poleCollided[1])
-                {
-                    poleCollided[1] = false;
-                }
+                vec[i] = t[i] - p.positionCurrent[i];
             }
-                                                              //checking  collision with goalkeeper
-        if (p.positionCurrent.x < defender.state.positionCurrent.x + defender.width / 2.0 &&
-            p.positionCurrent.x > defender.state.positionCurrent.x - defender.width / 2.0 &&
-            p.positionCurrent.z < defender.height &&
-            p.positionCurrent.y + BALL_RADIUS / 2.0 + DEFENDER_THICKNESS / 2.0 >= GOAL_POST_Y && !determineSphere)
-        {
-            p.velocityCurrent.y *= -p.elasticity;        // changing velocity 
-        }
-                                                      // applying gravity and ground bouncing effects on ball
-        
-        for (int i = 0; i < 3; ++i)                         //updating position
-        {
-            p.positionCurrent[i] = p.velocityCurrent[i] * t + 0.5 * p.accelerationCurrent[i] * t * t + p.positionCurrent[i];
-            p.velocityCurrent[i] = p.velocityCurrent[i] + p.accelerationCurrent[i] * t;
-        }
 
-        if (p.positionCurrent[2] <= 0)                  //if ball is below ground, reverse its velocity
-        {
-            p.positionCurrent[2] = 0;
-            p.velocityCurrent[2] = -p.velocityCurrent[2] * p.elasticity;
-            p.velocityCurrent[0] = p.velocityCurrent[0] * 0.95;
-            p.velocityCurrent[1] = p.velocityCurrent[1] * 0.95;
-            // for (int i = 0; i < 3; ++i)
-            // {
-            //     p.velocityCurrent[i] = p.elasticity * p.velocityCurrent[i];
-            // }
+            // calculating angles
+            alpha = atan(vec.y / vec.x);
+            theta = PI / 2.0 - beta + 2 * alpha;
+
+            // calculating velocity
+            double v = p.velocityCurrent.x * p.velocityCurrent.x + p.velocityCurrent.y * p.velocityCurrent.y;
+            v = sqrt(v);
+            p.velocityCurrent.y = v * cos(theta) * p.elasticity - p.friction * p.velocityCurrent.y;
+            p.velocityCurrent.x = -v * sin(theta) * p.elasticity + p.friction * p.velocityCurrent.x;
         }
-        for (int i = 0; i < 3; ++i)                     //stopping ball  fabs()->absolute value
+        else if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && poleCollided[2])
         {
-            if (fabs(p.velocityCurrent[i]) <= THRESHOLD_ZERO)
+            poleCollided[2] = false;
+        }
+    }
+    // checking collision with upper pole
+    if (p.positionCurrent.x < poles[1].state.positionCurrent[0] + POLE_LENGTH / 2 + POLE_RADIUS &&
+        p.positionCurrent.x > poles[1].state.positionCurrent[0] - POLE_LENGTH / 2 - POLE_RADIUS)
+    {
+        axes t = {p.positionCurrent.x + poles[1].state.positionCurrent[0], GOAL_POST_Y, POLE_RADIUS + POLE_HEIGHT};
+        if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && !poleCollided[1])
+        {
+            // collision detected
+            poleCollided[1] = true;
+            double alpha, beta, theta;
+
+            // calculating angles
+            beta = atan(p.velocityCurrent.y / p.velocityCurrent.z);
+            axes vec;
+
+            // calculating vector
+            for (int i = 0; i < 3; ++i)
             {
-                p.velocityCurrent[i] = 0;
+                vec[i] = t[i] - p.positionCurrent[i];
             }
+
+            // calculating angles
+            alpha = atan(vec.y / vec.z);
+            theta = PI / 2.0 - beta + 2 * alpha;
+
+            // calculating velocity
+            double v = p.velocityCurrent.z * p.velocityCurrent.z + p.velocityCurrent.y * p.velocityCurrent.y;
+            v = sqrt(v);
+            // Take friction into account
+            p.velocityCurrent.y = v * cos(theta) * p.elasticity - p.friction * p.velocityCurrent.y;
+            p.velocityCurrent.z = -v * sin(theta) * p.elasticity + p.friction * p.velocityCurrent.z;
         }
-        if (fabs(p.positionCurrent[2]) <= THRESHOLD_ZERO)
+        else if ((distanceBW(t, p.positionCurrent) <= BALL_RADIUS + POLE_RADIUS) && poleCollided[1])
         {
-            p.positionCurrent[2] = 0;
-            p.velocityCurrent[2] *= p.elasticity;
+            poleCollided[1] = false;
         }
+    }
+    // checking  collision with goalkeeper
+    if (p.positionCurrent.x < defender.state.positionCurrent.x + defender.width / 2.0 &&
+        p.positionCurrent.x > defender.state.positionCurrent.x - defender.width / 2.0 &&
+        p.positionCurrent.z < defender.height &&
+        p.positionCurrent.y + BALL_RADIUS / 2.0 + DEFENDER_THICKNESS / 2.0 >= GOAL_POST_Y && !determineSphere)
+    {
+        p.velocityCurrent.y *= -p.elasticity; // changing velocity
+    }
+    // applying gravity and ground bouncing effects on ball
+    for (int i = 0; i < 3; ++i) // updating position
+    {
+        p.positionCurrent[i] = p.velocityCurrent[i] * t + 0.5 * p.accelerationCurrent[i] * t * t + p.positionCurrent[i];
+        p.velocityCurrent[i] = p.velocityCurrent[i] + p.accelerationCurrent[i] * t;
+    }
+
+    if (p.positionCurrent[2] <= 0) // if ball is below ground, reverse its velocity
+    {
+        p.positionCurrent[2] = 0;
+        p.velocityCurrent[2] = -p.velocityCurrent[2] * p.elasticity;
+
+        // Add friction
+        p.velocityCurrent[0] = p.velocityCurrent[0] * 0.95;
+        p.velocityCurrent[1] = p.velocityCurrent[1] * 0.95;
+    }
+    for (int i = 0; i < 3; ++i) // stopping ball  fabs()->absolute value
+    {
+        if (fabs(p.velocityCurrent[i]) <= THRESHOLD_ZERO)
+        {
+            p.velocityCurrent[i] = 0;
+        }
+    }
+
+    // checking collision with ground
+    if (fabs(p.positionCurrent[2]) <= THRESHOLD_ZERO)
+    {
+        p.positionCurrent[2] = 0;
+        p.velocityCurrent[2] *= p.elasticity;
+
+        // Add friction
+        p.velocityCurrent[0] = p.velocityCurrent[0] * 0.95;
+        p.velocityCurrent[1] = p.velocityCurrent[1] * 0.95;
+    }
+
+    // checking collision with walls
     if (p.positionCurrent.y + BALL_RADIUS > 20.0 || p.positionCurrent.y - BALL_RADIUS < -20.0)
     {
         p.velocityCurrent.y = -p.velocityCurrent.y;
@@ -165,8 +192,8 @@ void updatePos(PhysicalState &p, double t)  // update position of ball
     }
 }
 
-void renderBitmapString(float x,float y,float z,void *font,char *string)
-{           // render characters at particular position
+void renderBitmapString(float x, float y, float z, void *font, char *string)
+{ // render characters at particular position
 
     char *c;
     glRasterPos3f(x, y, z);
@@ -176,7 +203,7 @@ void renderBitmapString(float x,float y,float z,void *font,char *string)
     }
 }
 
-void updatePosCallBack(int _)           // repetitive function to update position of ball
+void updatePosCallBack(int _) // repetitive function to update position of ball
 {
     if (currentMode != SHOOTING && currentlyWaiting)
     {
@@ -186,23 +213,22 @@ void updatePosCallBack(int _)           // repetitive function to update positio
     float fps = 60;
     if (currentMode == SHOOTING)
     {
-        updatePos(sphere, 1.0 / fps);           //it checks collision, etc also
+        updatePos(sphere, 1.0 / fps); // it checks collision, etc also
         glutTimerFunc(100 / fps, updatePosCallBack, 0);
     }
 }
 
 void draw()
-{      
+{
     // drawing general things
-
     glLoadIdentity(); // Reset the drawing perspective
     cameraPosition(toLookAt, sphereCamera.distance, sphereCamera.zAngle, sphereCamera.xAngle);
     if (firstTime)
     {
-        glutWarpPointer(WIDTH / 2, HEIGHT);     //set mouse position
+        glutWarpPointer(WIDTH / 2, HEIGHT); // set mouse position
         firstTime = false;
     }
-    GLfloat lightColor0[] = {1.0f, 1.0f, 1.0f, 0.7f};    // Color 
+    GLfloat lightColor0[] = {1.0f, 1.0f, 1.0f, 0.7f};    // Color
     GLfloat lightPos0[] = {0.0f, -100.0f, 100.0f, 1.0f}; // Position
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
@@ -216,8 +242,6 @@ void draw()
     glMatrixMode(GL_MODELVIEW); // Switch to the drawing perspective
 
     // glLightfv is an OpenGL function that sets the parameters of a light source. It is used to specify the values of various properties that control how the light interacts with the scene, such as its position, color, and direction.
-
-
 
     // drawing ball
 
@@ -255,9 +279,8 @@ void draw()
     glutPostRedisplay();
 }
 
-void showScore()                // showing score at top
+void showScore() // showing score at top of the goalpost
 {
-
     glPushMatrix();
     glTranslatef(0, GOAL_POST_Y, POLE_HEIGHT + BALL_RADIUS);
 
@@ -299,7 +322,6 @@ void showScore()                // showing score at top
     currentTextColor = {32 / 255.0, 140 / 255.0, 32 / 255.0, 1.0};
     glTranslatef(POLE_LENGTH / 2, 0, 1);
 
-
     int y = Goals - prevGoals;
     if (y < 0)
         y = 0;
@@ -318,7 +340,7 @@ void showScore()                // showing score at top
     currentTextColor = {0.1, 0.1, 1.0, 1.0};
     glTranslatef(POLE_LENGTH / 2, 0, 0);
 
-    int x = Tries % 5 - y;          //calculation to find curr score
+    int x = Tries % 5 - y; // calculation to find curr score
     if (Tries % 5 == 0 && Tries != 0)
     {
         x = 5 - y;
@@ -334,7 +356,7 @@ void showScore()                // showing score at top
     glPopMatrix();
 }
 
-void incrementPowerMeter(int _)     //calculation spin value
+void incrementPowerMeter(int _) // calculation spin value
 {
     static int up = 1;
     if (powerMeter > 1.0 || powerMeter < 0.0)
@@ -347,7 +369,7 @@ void incrementPowerMeter(int _)     //calculation spin value
         glutTimerFunc(1000 * 1 / 60.0, incrementPowerMeter, 0);
     }
 }
-void incrementPowerMeter2(int _)        //calculating intial force of ball
+void incrementPowerMeter2(int _) // calculating intial force of ball
 {
     static int up = 1;
     if (powerMeter2 > 1.0 || powerMeter2 < 0.0)
@@ -363,14 +385,14 @@ void incrementPowerMeter2(int _)        //calculating intial force of ball
 bool powering_set = false;
 
 void handleKeypress(unsigned char key, int x, int y) // when key pressed
-{ 
-                                            // The current mouse coordinates- x,y
-
-    if(key==EXIT_KEY){
+{
+    // The current mouse coordinates- x,y
+    if (key == EXIT_KEY)
+    {
         exit(0);
     }
 
-    if (currentMode == CHOOSE)     // At choose page, use chooses all levels
+    if (currentMode == CHOOSE) // At choose page, use chooses all levels
     {
         if (key == '1')
         {
@@ -380,7 +402,7 @@ void handleKeypress(unsigned char key, int x, int y) // when key pressed
         else if (key == '2')
         {
             currentLevel = EASY;
-                                                        //deciding initial velocity 
+            // deciding initial velocity
             defender.state.velocityInitial.x = defender.state.velocityCurrent.x = DEFENDER_SPEED_EASY;
             defender.state.velocityInitial.z = defender.state.velocityCurrent.z = DEFENDER_SPEED_VERTICAL;
             currentMode = ADJUSTING;
@@ -400,14 +422,14 @@ void handleKeypress(unsigned char key, int x, int y) // when key pressed
             defender.state.velocityInitial.z = defender.state.velocityCurrent.z = DEFENDER_SPEED_VERTICAL;
             currentMode = ADJUSTING;
         }
-        if (key == 27)  //27 means ESC
+        if (key == 27) // 27 means ESC
         {
             currentMode = HELP;
             return;
         }
     }
 
-    if (currentMode != HELP)        //zoom in /out
+    if (currentMode != HELP) // zoom in /out
     {
         switch (key)
         {
@@ -438,15 +460,15 @@ void handleKeypress(unsigned char key, int x, int y) // when key pressed
         case '\r':
             currentMode = AIMING;
             break;
-        case 27:                  
-            currentMode = CHOOSE; 
+        case 27:
+            currentMode = CHOOSE;
         }
     }
     if (currentMode == AIMING)
     {
         switch (key)
         {
-        case 112:                  //lowercase p switching powermeter
+        case 112: // lowercase p switching powermeter
             currentMode = POWERING_ACC;
             glutTimerFunc(1000 * 1 / 60.0, incrementPowerMeter2, 0);
             break;
@@ -454,7 +476,7 @@ void handleKeypress(unsigned char key, int x, int y) // when key pressed
             currentMode = ADJUSTING;
         }
     }
-    if (currentMode == POWERING_ACC)        //currently in spin state
+    if (currentMode == POWERING_ACC) // currently in spin state
     {
         switch (key)
         {
@@ -471,7 +493,7 @@ void handleKeypress(unsigned char key, int x, int y) // when key pressed
 
         switch (key)
         {
-        case ' ':                               // pressing space moves to speedmeter
+        case ' ': // pressing space moves to speedmeter
             currentMode = POWERING;
 
             break;
@@ -492,8 +514,8 @@ void handleKeypress(unsigned char key, int x, int y) // when key pressed
             break;
         }
     }
-    if (key == 97)                  //play with human motions 
-    {   
+    if (key == 97) // play with human motions
+    {
         // left
 
         defender.state.velocityInitial.x = -DEFENDER_SPEED;
@@ -526,7 +548,9 @@ double sq(double x)
 
 void idle()
 {
-    
+    // idle function which determines the selection modes
+
+    // if waiting
     if (!currentlyWaiting)
     {
         if (currentMode == POWERING_ACC && !downKeys[112])
@@ -536,7 +560,8 @@ void idle()
             if (powerMeter2 >= 1.0)
                 powerMeter2 = 1.0;
         }
-        if (currentMode == POWERING && !downKeys[' '] && powering_set)       //deciding sphere velocity while shooting
+
+        if (currentMode == POWERING && !downKeys[' '] && powering_set) // deciding sphere velocity while shooting
         {
             sphere.velocityCurrent[0] = sphere.velocityInitial[0] =
                 cos(DEG2GRAD(aimArrow.zAngle)) * sin(DEG2GRAD(aimArrow.yAngle)) * BALL_MAX_SPEED * powerMeter;
@@ -551,11 +576,11 @@ void idle()
                 sgn1 = -0.5;
                 sgn2 = -0.5;
             }
+
+            // magnus effect x dir acceleration
             sphere.accelerationCurrent.x = -0.06 * sphere.velocityCurrent[0] - 1.4 * sgn1 * powerMeter2 * sphere.velocityCurrent[1];
-            
+
             // magnus effect y dir acceleration
-            
-            // sqrt(sq(sphere.velocityCurrent[0]) + sq(sphere.velocityCurrent[1]))
             sphere.accelerationCurrent.y = -0.06 * sphere.velocityCurrent[1] + 1.4 * sgn2 * powerMeter2 * sphere.velocityCurrent[0];
             if (powerMeter >= 1.0)
                 powerMeter = 1.0;
@@ -563,7 +588,7 @@ void idle()
             currentlyWaiting = true;
             powering_set = false;
             srand(time(NULL));
-            defender.move_random_dist= rand()%100;
+            defender.move_random_dist = rand() % 100;
         }
         if (currentMode == POWERING && downKeys[27])
         {
@@ -586,29 +611,15 @@ void idle()
 
                     scoredGoal = isItGoal(*determineSphere);
 
-                        if (scoredGoal)
-                        {
-                            Goals++;
-                            system("paplay resources/goal.wav&");
-                        }
-                    // else
-                    // {
-
-                    //     if (scoredGoal)
-                    //     {
-                    //         message = "GOAL!";
-                    //         Goals++;
-                    //         system("paplay resources/goal.wav&");   // sound effect when goal is shoot
-                    //     }
-                    //     else
-                    //     {
-                    //         message = "MISS!";
-                    //     }
-                    // }
+                    if (scoredGoal)
+                    {
+                        Goals++;
+                        system("paplay resources/goal.wav&");
+                    }
 
                     glutTimerFunc(1000 * RESET_TIME, initialiseEverythingCallback, 0);
                     Tries++;
-                    if (Tries % 5 == 0)     //if 5 goals reached, print result
+                    if (Tries % 5 == 0)
                     {
                         currentMode = CHOOSE;
                         rotateMsg(0);
@@ -637,7 +648,7 @@ void handleUpKeypress(unsigned char key, int x, int y)
     downKeys[key] = false;
 }
 
-void handleSpecialKeypress(int key, int x, int y)       //changing arrow directions
+void handleSpecialKeypress(int key, int x, int y) // changing arrow directions
 {
     if (currentMode == AIMING)
     {
@@ -667,19 +678,20 @@ int sgn(T val)
     return (T(0) < val) - (val < T(0));
 }
 
+// Function to handle camera movement with mouse
 void handlePassiveMouse(int x, int y)
 {
     if (currentMode != HELP)
     {
         sphereCamera.xAngle = -90 + (x - WIDTH / 2) * 90 / WIDTH;
-        sphereCamera.zAngle = 45 + -1 * (y)*30 / HEIGHT;
+        sphereCamera.zAngle = 45 + -1 * (y) * 30 / HEIGHT;
     }
 }
 
 void myInit(void)
 {
-    int angle_direction= 1;
-    if(aimArrow.yAngle<0)
+    int angle_direction = 1;
+    if (aimArrow.yAngle < 0)
     {
         angle_direction = -1;
     }
@@ -691,7 +703,7 @@ void myInit(void)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-    glEnable(GL_LIGHTING); // Enable lighting
+    glEnable(GL_LIGHTING);  // Enable lighting
     glEnable(GL_LIGHT0);    // Enable light #0
     glEnable(GL_LIGHT1);    // Enable light #1
     glEnable(GL_LIGHT2);    // Enable light #2
@@ -722,7 +734,7 @@ int main(int argc, char *argv[])
     glutSpecialFunc(handleSpecialKeypress);
     glutPassiveMotionFunc(handlePassiveMouse);
 
-    groundTexture = convertAndLoadTexture("resources/grass1.txt");          //loading textures
+    groundTexture = convertAndLoadTexture("resources/grass1.txt"); // loading textures
     defenderTexture = convertAndLoadTexture("resources/defender1.txt");
     font = convertAndLoadTexture("resources/fonts/Ubuntu Mono Nerd Font Complete Mono.txt");
     ads = convertAndLoadTexture("resources/IITI.txt");

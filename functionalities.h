@@ -8,9 +8,8 @@
 #include "constants.h"
 using namespace std;
 
-#define DEG2GRAD(x) ((x)*PI / 180.0)
-#define GRAD2DEG(x) ((x)*180.0 / PI)
-
+#define DEG2GRAD(x) ((x) * PI / 180.0)
+#define GRAD2DEG(x) ((x) * 180.0 / PI)
 
 extern unsigned int Tries, Goals;
 
@@ -75,13 +74,13 @@ enum mode
 {
     ADJUSTING,
     AIMING,
-    POWERING,           //speed meter
+    POWERING, // speed meter
     SHOOTING,
     HELP,
     NONE,
     CHOOSE,
-    POWERING_ACC,           //spin meter
-    POWERING_IDLE       // transition between both meter
+    POWERING_ACC, // spin meter
+    POWERING_IDLE // transition between both meter
 };
 enum level
 {
