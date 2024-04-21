@@ -26,7 +26,7 @@ void handleResize(int w, int h)
     glMatrixMode(GL_MODELVIEW);
 }
 
-double &axes::operator[](int index)     //swtching .x,.y,.z into arrays format
+double &axes::operator[](int index) // swtching .x,.y,.z into arrays format
 {
     switch (index)
     {
@@ -81,24 +81,24 @@ ostream &operator<<(ostream &out, PhysicalState &p)
     out << p.timePassed << endl;
 }
 
-bool isItGoal(PhysicalState ball)       //checking goal condition
+bool isItGoal(PhysicalState ball) // checking goal condition
 {
 
-        if ((ball.positionCurrent[0] <= -POLE_RADIUS + POLE_LENGTH / 2) &&
-            (ball.positionCurrent[0] >= +POLE_RADIUS - POLE_LENGTH / 2) &&
-            (ball.positionCurrent[2] <= POLE_HEIGHT) && (ball.positionCurrent[1] > GOAL_POST_Y))
-            return true;
-        else
-            return false;
+    if ((ball.positionCurrent[0] <= -POLE_RADIUS + POLE_LENGTH / 2) &&
+        (ball.positionCurrent[0] >= +POLE_RADIUS - POLE_LENGTH / 2) &&
+        (ball.positionCurrent[2] <= POLE_HEIGHT) && (ball.positionCurrent[1] > GOAL_POST_Y))
+        return true;
+    else
+        return false;
 }
 
-void backgroundMusicPlayer(int _)   //plays sound
+void backgroundMusicPlayer(int _) // plays sound
 {
     system("paplay resources/back.wav --volume 30000 &");
     glutTimerFunc(5 * 1000, backgroundMusicPlayer, 0);
 }
 
-void initialiseEverything()     // reset after every shoot
+void initialiseEverything() // reset after every shoot
 {
     currentMode = ADJUSTING;
 
@@ -147,7 +147,7 @@ void initialiseEverything()     // reset after every shoot
     defender.width = DEFENDER_WIDTH;
     defender.height = 2.3;
 
-    if (currentLevel == EASY)   // setting parameters of defender in easy level
+    if (currentLevel == EASY) // setting parameters of defender in easy level
     {
 
         // printf("Init called\n");
@@ -155,7 +155,7 @@ void initialiseEverything()     // reset after every shoot
         defender.state.velocityInitial[2] = defender.state.velocityCurrent[2] = DEFENDER_SPEED_VERTICAL;
         defender.state.velocityInitial.x = defender.state.velocityCurrent.x = DEFENDER_SPEED_EASY;
         defender.state.velocityInitial.z = defender.state.velocityCurrent.z = DEFENDER_SPEED_VERTICAL;
-        defender.move_random_dist= 50;
+        defender.move_random_dist = 50;
 
         defender.state.accelerationCurrent[0] = 0;
         defender.state.accelerationCurrent[1] = 0;
@@ -172,7 +172,7 @@ void initialiseEverything()     // reset after every shoot
         poles[2].state.positionCurrent[0] = 0;
         poles[1].state.positionCurrent[0] = 0;
     }
-    if (currentLevel == MEDIUM)     // setting parameters of defender in medium level
+    if (currentLevel == MEDIUM) // setting parameters of defender in medium level
     {
 
         defender.state.velocityInitial[0] = defender.state.velocityCurrent[0] = DEFENDER_SPEED_MEDIUM;
@@ -195,9 +195,9 @@ void initialiseEverything()     // reset after every shoot
         poles[2].state.positionCurrent[0] = 0;
         poles[1].state.positionCurrent[0] = 0;
     }
-    if (currentLevel == HARD)       // setting parameters of defender in hard level
+    if (currentLevel == HARD) // setting parameters of defender in hard level
     {
-  
+
         defender.state.velocityInitial[0] = defender.state.velocityCurrent[0] = DEFENDER_SPEED_HARD;
         defender.state.velocityInitial[2] = defender.state.velocityCurrent[2] = DEFENDER_SPEED_VERTICAL;
         defender.state.velocityInitial.x = defender.state.velocityCurrent.x = DEFENDER_SPEED_HARD;
@@ -218,13 +218,13 @@ void initialiseEverything()     // reset after every shoot
         poles[1].state.positionCurrent[0] = 0;
     }
 
-    if (currentLevel == HUMAN)              // setting parameters of defender in play with human
+    if (currentLevel == HUMAN) // setting parameters of defender in play with human
     {
-        
-        defender.state.velocityInitial[2] = 0; 
-        defender.state.velocityCurrent[2] = 0; 
-        defender.state.velocityInitial[0] = 0; 
-        defender.state.velocityCurrent[0] = 0; 
+
+        defender.state.velocityInitial[2] = 0;
+        defender.state.velocityCurrent[2] = 0;
+        defender.state.velocityInitial[0] = 0;
+        defender.state.velocityCurrent[0] = 0;
 
         defender.state.accelerationCurrent[2] = 0;
         defender.state.accelerationCurrent[0] = 0;
@@ -234,10 +234,10 @@ void initialiseEverything()     // reset after every shoot
         defender.state.positionCurrent[1] = 0;
         defender.state.positionCurrent[2] = 0;
 
-        defender.state.velocityInitial.x = 0; 
-        defender.state.velocityCurrent.x = 0; 
-        defender.state.velocityInitial.y = 0; 
-        defender.state.velocityCurrent.y = 0; 
+        defender.state.velocityInitial.x = 0;
+        defender.state.velocityCurrent.x = 0;
+        defender.state.velocityInitial.y = 0;
+        defender.state.velocityCurrent.y = 0;
         poles[0].state.velocityCurrent[0] = 0;
         poles[2].state.velocityCurrent[0] = 0;
         poles[1].state.velocityCurrent[0] = 0;
@@ -245,7 +245,7 @@ void initialiseEverything()     // reset after every shoot
         poles[2].state.positionCurrent[0] = 0;
         poles[1].state.positionCurrent[0] = 0;
     }
-                                                //updating ball position
+    // updating ball position
     sphereCamera.xAngle = -90.0f;
     sphereCamera.zAngle = 15.0f;
     sphereCamera.distance = 5.0;
@@ -281,7 +281,7 @@ void initialiseEverythingCallback(int _)
     initialiseEverything();
 }
 
-void drawGoalPost()         //drawing goal post
+void drawGoalPost() // drawing goal post
 {
 
     {
@@ -317,7 +317,7 @@ camera::camera()
 
 camera sphereCamera;
 
-void rainBox(double alpha = 0.7)        //used in making powermeter
+void rainBox(double alpha = 0.7) // used in making powermeter
 {
 
     glBegin(GL_QUADS);
@@ -408,7 +408,7 @@ void drawHUD()
     glDisable(GL_LIGHTING);
     if (currentMode == HELP)
     {
-                                            //drawing instruction page
+        // drawing instruction page
         const char *instructions = R"INSTRUCT(      
         INSTRUCTIONS
         You can use the mouse to look around.
@@ -447,8 +447,8 @@ void drawHUD()
         glPopMatrix();
     }
     else
-    { 
-        if (currentMode == CHOOSE && Tries % 5 == 0)        //drawing choose page
+    {
+        if (currentMode == CHOOSE && Tries % 5 == 0) // drawing choose page
         {
             // prevGoals = Goals;
             const char *instructions = R"INSTRUCT(
@@ -490,15 +490,14 @@ void drawHUD()
             glPushAttrib(GL_CURRENT_BIT);
             glPushMatrix();
             glLoadIdentity();
-            gluOrtho2D(-100.0, 100.0, -100.0, 100.0); 
+            gluOrtho2D(-100.0, 100.0, -100.0, 100.0);
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
-
 
             glClear(GL_DEPTH_BUFFER_BIT);
 
             if (currentMode == POWERING)
-            {                                                              // Power Bar
+            { // Power Bar
                 glPushMatrix();
 
                 glTranslatef(90, 0, 0);
@@ -514,7 +513,7 @@ void drawHUD()
                 glPopMatrix();
             }
             if (currentMode == POWERING_ACC)
-            {                                                               // Power Bar
+            { // Power Bar
                 glPushMatrix();
 
                 glTranslatef(-84, 0, 0);
@@ -543,7 +542,7 @@ void drawHUD()
     glEnable(GL_LIGHTING);
 }
 
-void updateGoalPostPosition(int _)      //goal post movement
+void updateGoalPostPosition(int _) // goal post movement
 {
 
     poles[0].state.timePassed += 1 / 60.0;
@@ -553,7 +552,7 @@ void updateGoalPostPosition(int _)      //goal post movement
 
     for (int i = 0; i < 3; ++i)
     {
-        poles[i].state.positionCurrent[0] +=poles[i].state.velocityCurrent[0] * t;
+        poles[i].state.positionCurrent[0] += poles[i].state.velocityCurrent[0] * t;
     }
 
     if (GOAL_POST_X + POLE_LENGTH / 2 - POLE_RADIUS + poles[2].state.positionCurrent[0] >= 15 || GOAL_POST_X - POLE_LENGTH / 2 + POLE_RADIUS + poles[0].state.positionCurrent[0] <= -15)
@@ -567,7 +566,7 @@ void updateGoalPostPosition(int _)      //goal post movement
     glutTimerFunc(1000 * 1 / 60.0, updateGoalPostPosition, 1 / 60.0);
 }
 
-void updateDefenderPosition(int yAngle)      //defender motion
+void updateDefenderPosition(int yAngle) // defender motion
 {
     static float increment = 2.0f;
     static int done = 0;
@@ -584,10 +583,10 @@ void updateDefenderPosition(int yAngle)      //defender motion
     // for(int i=0; i<3; i++){
     // printf("Current Defender Velocity on axis %d is: %f\n", i, defender.state.velocityCurrent[i]);}
 
-    if (currentLevel == HUMAN)          //updting defender in human level
+    if (currentLevel == HUMAN) // updting defender in human level
     {
 
-        if (defender.state.positionCurrent[2] < 0)      //if defender goes inside ground
+        if (defender.state.positionCurrent[2] < 0) // if defender goes inside ground
         {
             defender.state.positionCurrent[2] = 0;
             defender.state.velocityCurrent[2] = 0;
@@ -597,7 +596,7 @@ void updateDefenderPosition(int yAngle)      //defender motion
         {
             defender.state.accelerationCurrent[2] = -9.8;
         }
-        if (defender.state.velocityCurrent[0] < 0 && defender.state.accelerationCurrent[0] < 0) //negative accelaration
+        if (defender.state.velocityCurrent[0] < 0 && defender.state.accelerationCurrent[0] < 0) // negative accelaration
         {
             defender.state.accelerationCurrent[0] = 0;
             defender.state.velocityCurrent[0] = 0;
@@ -607,7 +606,7 @@ void updateDefenderPosition(int yAngle)      //defender motion
             defender.state.accelerationCurrent[0] = 0;
             defender.state.velocityCurrent[0] = 0;
         }
-        for (int i = 0; i < 3; ++i)                     //updating position and velocity
+        for (int i = 0; i < 3; ++i) // updating position and velocity
         {
             defender.state.positionCurrent[i] +=
                 defender.state.velocityCurrent[i] * t + 0.5 * defender.state.accelerationCurrent[i] * t * t;
@@ -617,8 +616,7 @@ void updateDefenderPosition(int yAngle)      //defender motion
         }
     }
 
-
-    if (currentLevel == EASY || currentLevel== MEDIUM || currentLevel == HARD)       //updting defender in easy level
+    if (currentLevel == EASY || currentLevel == MEDIUM || currentLevel == HARD) // updting defender in easy level
     {
         defender.state.accelerationCurrent[0] = 0;
         defender.state.accelerationCurrent[1] = 0;
@@ -629,63 +627,71 @@ void updateDefenderPosition(int yAngle)      //defender motion
             defender.state.positionCurrent[2] = 0;
             defender.state.velocityCurrent[2] = -defender.state.velocityCurrent[2];
         }
-        //Sometimes randomly move it in the wrong direction when random move is multiple of 27
-        if(defender.move_random_dist%27 == 0){
-            //Reverse the direction of movement
+        // Sometimes randomly move it in the wrong direction when random move is multiple of 27
+        if (defender.move_random_dist % 27 == 0)
+        {
+            // Reverse the direction of movement
             yAngle *= -1;
         }
-        float rand_move= defender.move_random_dist/100.0;
-        //printf("Random move: %f\n", rand_move);
-        // float rand_move= 1;
-        float max_distance= POLE_LENGTH/2 - POLE_RADIUS - defender.width/2;
-        //defender.state.positionCurrent[0]= 0; //resetting the position of defender
-    
-        if(yAngle<0){
+        float rand_move = defender.move_random_dist / 100.0;
+        // printf("Random move: %f\n", rand_move);
+        //  float rand_move= 1;
+        float max_distance = POLE_LENGTH / 2 - POLE_RADIUS - defender.width / 2;
+        // defender.state.positionCurrent[0]= 0; //resetting the position of defender
+
+        if (yAngle < 0)
+        {
             // defender.state.positionCurrent[0] += rand_move*max_distance;
-            if(defender.state.positionCurrent[0] > rand_move*max_distance*(-1)){
-                //Set defender velocity in the correct direction
-                if(defender.state.velocityCurrent[0] > 0){
+            if (defender.state.positionCurrent[0] > rand_move * max_distance * (-1))
+            {
+                // Set defender velocity in the correct direction
+                if (defender.state.velocityCurrent[0] > 0)
+                {
                     defender.state.velocityCurrent[0] *= -1;
                 }
                 defender.state.positionCurrent[0] += defender.state.velocityCurrent[0] * t + 0.5 * defender.state.accelerationCurrent[0] * t * t;
             }
-            else{
-                defender.state.positionCurrent[0] = rand_move*max_distance*(-1);
+            else
+            {
+                defender.state.positionCurrent[0] = rand_move * max_distance * (-1);
                 defender.state.velocityCurrent[0] = 0;
                 defender.state.accelerationCurrent[0] = 0;
-                //update z position
+                // update z position
                 defender.state.positionCurrent[2] += defender.state.velocityCurrent[2] * t + 0.5 * defender.state.accelerationCurrent[2] * t * t;
-                //defender.acceleration();
+                // defender.acceleration();
             }
-
         }
-        else if(yAngle==0){
+        else if (yAngle == 0)
+        {
             defender.state.positionCurrent[0] = 0;
         }
-        else{
-             if(defender.state.positionCurrent[0] < rand_move*max_distance*(1)){
-                //Set defender velocity in the correct direction
-                if(defender.state.velocityCurrent[0] < 0){
+        else
+        {
+            if (defender.state.positionCurrent[0] < rand_move * max_distance * (1))
+            {
+                // Set defender velocity in the correct direction
+                if (defender.state.velocityCurrent[0] < 0)
+                {
                     defender.state.velocityCurrent[0] *= -1;
                 }
                 defender.state.positionCurrent[0] += defender.state.velocityCurrent[0] * t + 0.5 * defender.state.accelerationCurrent[0] * t * t;
             }
-            else{
-                defender.state.positionCurrent[0] = rand_move*max_distance*(1);
+            else
+            {
+                defender.state.positionCurrent[0] = rand_move * max_distance * (1);
                 defender.state.velocityCurrent[0] = 0;
                 defender.state.accelerationCurrent[0] = 0;
-                //update z position
+                // update z position
                 defender.state.positionCurrent[2] += defender.state.velocityCurrent[2] * t + 0.5 * defender.state.accelerationCurrent[2] * t * t;
-                //defender.acceleration();
+                // defender.acceleration();
             }
         }
     }
-    
 }
 
-int convertToTexture(const char *filename)   // for texture making
+int convertToTexture(const char *filename) // for texture making
 {
-    
+
     ifstream textFile(filename);
     string destination(filename);
     destination += ".tx";
@@ -715,7 +721,7 @@ int convertToTexture(const char *filename)   // for texture making
     dest.close();
 }
 
-GLuint loadTextureFile(const char *filename)        //loading texture
+GLuint loadTextureFile(const char *filename) // loading texture
 {
 
     GLuint texture;
@@ -734,8 +740,6 @@ GLuint loadTextureFile(const char *filename)        //loading texture
     assert(w * h == size / 4);
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
-
-
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -776,7 +780,7 @@ void chalkSemiCircle(axes center, float radius, float start_angle, float end_ang
     {
         for (float disp = 0; disp <= chalkwidth; disp += 0.01)
         {
-            glVertex2f(center.x + (sin(i)*radius), center.y + (cos(i)*radius) + disp);
+            glVertex2f(center.x + (sin(i) * radius), center.y + (cos(i) * radius) + disp);
         }
     }
 
@@ -807,8 +811,8 @@ void drawChalkLines()
     start.x = -start.x;
     end.x = -end.x;
     chalkVRectangle(start, end);
-    start = {(ground.corners[1].x + ground.corners[2].x)/2, GOAL_POST_Y};
-    chalkSemiCircle(start, (ground.corners[2].x - ground.corners[1].x)/4, PI/2, 3*PI/2);
+    start = {(ground.corners[1].x + ground.corners[2].x) / 2, GOAL_POST_Y};
+    chalkSemiCircle(start, (ground.corners[2].x - ground.corners[1].x) / 4, PI / 2, 3 * PI / 2);
     glPopMatrix();
     glPopAttrib();
     glPopAttrib();
@@ -925,7 +929,6 @@ void rotateMsg(int _)
     }
 }
 
-
 void fun(string msg)
 {
 
@@ -980,144 +983,46 @@ void fun(string msg)
     writeText(msg, font, CENTER);
     glPopMatrix();
 }
-void resultMsg()            //printing results
+void resultMsg() // printing results
 {
-        bool toWrite = true;
+    bool toWrite = true;
 
-        string msg = "MISS!";
+    string msg = "MISS!";
 
-        currentTextColor = {1.0, 0.3, 0.3, 1};
-        if (determineSphere)
+    currentTextColor = {1.0, 0.3, 0.3, 1};
+    if (determineSphere)
+    {
+        if (isItGoal(*determineSphere))
         {
-            if (isItGoal(*determineSphere))
-            {
-                msg = "GOAL!";
+            msg = "GOAL!";
 
-                currentTextColor = {0.3, 1.0, 0.3, 1};
-            }
+            currentTextColor = {0.3, 1.0, 0.3, 1};
         }
+    }
 
-        if (!determineSphere)
-        {
-            msg = "";
-            toWrite = false;
-        }
+    if (!determineSphere)
+    {
+        msg = "";
+        toWrite = false;
+    }
 
-        if (toWrite)
-        {
+    if (toWrite)
+    {
 
-            glPopMatrix();
-            if (Tries % 5 == 0)
-            {
-             
-                if (prevGoals > 2)
-                {
-                    msg = "A-WINS!";
-                }
-                else
-                {
-                    msg = "D-WINS";
-                }
-
-              
-             
-            }
-            fun(msg);
-            
-        }
         glPopMatrix();
-    // else
-    // {
-    //     glPushMatrix();
+        if (Tries % 5 == 0)
+        {
 
-    //     float col[] = {132 / 255.0, 121 / 255.0, 150 / 255.0, 0.7};
-    //     //    float col[] = {1,0,0,1};
-
-    //     float distance = sphereCamera.distance - 4;
-
-    //     float colin[] = {1.0, 1.0, 1.0, 0.7};
-    //     glTranslatef(distance * (cos(DEG2GRAD(sphereCamera.zAngle)) * cos(DEG2GRAD(sphereCamera.xAngle))),
-    //                  distance * (cos(DEG2GRAD(sphereCamera.zAngle)) * sin(DEG2GRAD(sphereCamera.xAngle))),
-    //                  distance * sin(DEG2GRAD(sphereCamera.zAngle)));
-    //     glTranslatef(toLookAt.x, toLookAt.y, toLookAt.z);
-    //     glRotatef(90 + sphereCamera.xAngle + textRotX, 0, 0, 1);
-    //     glRotatef(-sphereCamera.zAngle, 1, 0, 0);
-    //     glScalef(0.75, 0.75, 0.75);
-
-    //     bool toWrite = true;
-
-        
-    //     if (message == "MISS!")
-    //     {
-    //         currentTextColor = {1.0, 0.3, 0.3, 1};
-    //     }
-    //     else
-    //     {
-    //         currentTextColor = {0.3, 1.0, 0.3, 1};
-    //     }
-    //     if (!determineSphere)
-    //     {
-    //         // msg = "";
-    //         // cout << "was in not sphere\n";
-    //         message = "";
-    //         toWrite = false;
-    //     }
-    //     if (Tries % 5 == 0)
-    //     {
-    
-    //         if (prevGoals > 2)
-    //         {
-    //             message = "A-WINS!";
-    //         }
-    //         else
-    //         {
-    //             message = "D-WINS";
-    //         }
-
-    //     }
-    //     if (toWrite)
-    //     {
-    //         GLUquadric *quad = gluNewQuadric();
-    //         glPushMatrix();
-    //         glColor4fv(col);
-    //         glScalef(2, 0.5, 1);
-    //         glRotatef(90, 1, 0, 0);
-    //         // gluSphere(sphere, radius, slices, stacks);
-    //         gluCylinder(quad, 1, 1, 1, 40, 40);
-    //         // gluDisk(quad, 0.9, 1, 40, 40);
-    //         glColor4fv(colin);
-    //         // gluDisk(quad, 0, 0.9, 40, 40);
-
-    //         glPopMatrix();
-
-    //         glPushMatrix();
-
-    //         glPushMatrix();
-    //         glColor4fv(col);
-    //         glScalef(2, 0.5, 1);
-    //         glTranslatef(0, -1, 0);
-    //         glRotatef(90, 1, 0, 0);
-    //         gluDisk(quad, 0.9, 1, 40, 40);
-    //         glColor4fv(colin);
-    //         gluDisk(quad, 0, 0.9, 40, 40);
-    //         glPopMatrix();
-    //         gluDeleteQuadric(quad);
-    //         glPopMatrix();
-
-    //         glPushMatrix();
-    //         glTranslatef(0, .001, -0.5);
-    //         glRotatef(180, 0, 0, 1);
-    //         // writeText(msg, font, CENTER);
-    //         writeText(message, font, CENTER);
-
-    //         glPopMatrix();
-
-    //         glPushMatrix();
-    //         glTranslatef(0, -0.501, -0.5);
-    //         // writeText(msg, font, CENTER);
-    //         writeText(message, font, CENTER);
-    //         glPopMatrix();
-    //     }
-    //     glPopMatrix();
-    // }
+            if (prevGoals > 2)
+            {
+                msg = "A-WINS!";
+            }
+            else
+            {
+                msg = "D-WINS";
+            }
+        }
+        fun(msg);
+    }
+    glPopMatrix();
 }

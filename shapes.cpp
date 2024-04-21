@@ -5,7 +5,7 @@
 #include <bits/stdc++.h>
 #include "functionalities.h"
 
-void FlatSurface::draw()     // drawing flat surface like ground
+void FlatSurface::draw() // drawing flat surface like ground
 {
 
     start2DTexture(groundTexture);
@@ -44,7 +44,7 @@ void FlatSurface::draw()     // drawing flat surface like ground
 
 FlatSurface ground;
 
-void PoleSurface::draw()        // draw pole rods
+void PoleSurface::draw() // draw pole rods
 {
     glPushAttrib(GL_CURRENT_BIT);
     GLUquadric *quadric = gluNewQuadric();
@@ -139,7 +139,7 @@ PoleSurface::PoleSurface()
     color[3] = 1.0;
 }
 
-void FlatArrow::drawWithAngles()  // drawing arrow of ball
+void FlatArrow::drawWithAngles() // drawing arrow of ball
 {
 
     axes vector;
@@ -200,10 +200,11 @@ void FlatArrow::drawWithAngles()  // drawing arrow of ball
     glPopAttrib();
 }
 
-void Defender::acceleration()       //collision of defender with poles
+void Defender::acceleration() // collision of defender with poles
 {
-    if(this->state.positionCurrent.z>=0.7){// Ensuring goalkeeper doesnt jump over the top pole
-        this->state.velocityCurrent.z*= -1;
+    if (this->state.positionCurrent.z >= 0.7)
+    { // Ensuring goalkeeper doesnt jump over the top pole
+        this->state.velocityCurrent.z *= -1;
     }
     else
     {
@@ -211,12 +212,12 @@ void Defender::acceleration()       //collision of defender with poles
             this->state.positionCurrent.x <= -POLE_LENGTH / 2.0 + this->width / 2 + POLE_RADIUS)
         {
             this->state.velocityCurrent.x *= -1;
-            //this->state.accelerationCurrent[0] *= -1;
+            // this->state.accelerationCurrent[0] *= -1;
         }
     }
 }
 
-void Defender::draw()           // drawing defender
+void Defender::draw() // drawing defender
 {
     start2DTexture(defenderTexture);
 
@@ -232,8 +233,6 @@ void Defender::draw()           // drawing defender
     glTexCoord2f(0.0, 0.0);
     glVertex3f(-this->width / 2, 0, this->height / 2);
     glEnd();
-
-
 
     glEnd();
 
@@ -279,7 +278,6 @@ void Defender::draw()           // drawing defender
     glEnd();
 
     end2DTexture();
-
 }
 
 FlatArrow aimArrow;
